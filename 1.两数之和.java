@@ -5,6 +5,7 @@ import java.util.*;
  *
  * [1] 两数之和
  */
+// @lc code=start
 
 // 暴力法
 // @data Feb 12 2020
@@ -42,19 +43,32 @@ import java.util.*;
         return new int[0];
     }
 } */
-// @lc code=start
+
 // 一遍哈希表
 // @data Feb 19 2020
+// class Solution {
+//     public int[] twoSum(int[] nums, int target) {
+//         Map<Integer, Integer> map = new HashMap();
+//         for (int i = 0; i < nums.length; ++ i) {
+//             int complement = target - nums[i];
+//             if (map.containsKey(complement))
+//                 return new int[] {i, map.get(complement)};
+//             map.put(nums[i], i);
+//         }
+//         return new int[0];
+//     }
+// }
+
+// @date Mar 03 2020
 class Solution {
     public int[] twoSum(int[] nums, int target) {
-        Map<Integer, Integer> map = new HashMap();
-        for (int i = 0; i < nums.length; ++ i) {
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < nums.length; i ++) {
             int complement = target - nums[i];
-            if (map.containsKey(complement))
+            if (map.contains(complement))
                 return new int[] {i, map.get(complement)};
             map.put(nums[i], i);
         }
-        return new int[0];
     }
 }
 // @lc code=end
