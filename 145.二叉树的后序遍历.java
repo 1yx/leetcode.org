@@ -16,18 +16,33 @@ import java.util.ArrayList;
  *     TreeNode(int x) { val = x; }
  * }
  */
+// class Solution {
+//     public List<Integer> postorderTraversal(TreeNode root) {
+//         List<Integer> ans = new ArrayList<>();
+//         postOrder(root, ans);
+//         return ans;
+//     }
+
+//     public void postOrder(TreeNode root, List<Integer> ans) {
+//         if (root == null) return;
+//         if (root.left != null) postOrder(root.left, ans);
+//         if (root.right != null) postOrder(root.right, ans);
+//         ans.add(root.val);
+//     }
+// }
+
+// @date Mar 05 2020
 class Solution {
     public List<Integer> postorderTraversal(TreeNode root) {
-        List<Integer> ans = new ArrayList<>();
-        postOrder(root, ans);
-        return ans;
+        List<Integer> res = new ArrayList<>();
+        postOrder(root, res);
+        return res;
     }
-
-    public void postOrder(TreeNode root, List<Integer> ans) {
+    void postOrder(TreeNode root, List<Integer> res) {
         if (root == null) return;
-        if (root.left != null) postOrder(root.left, ans);
-        if (root.right != null) postOrder(root.right, ans);
-        ans.add(root.val);
+        if (root.left != null) postOrder(root.left, res);
+        if (root.right != null) postOrder(root.right, res);
+        res.add(root.val);
     }
 }
 // @lc code=end
