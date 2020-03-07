@@ -1,7 +1,3 @@
-import java.util.Queue;
-
-import javax.swing.tree.TreeNode;
-
 /*
  * @lc app=leetcode.cn id=111 lang=java
  *
@@ -57,25 +53,51 @@ import javax.swing.tree.TreeNode;
 // }
 
 // dfs
-class Solution {
-    public int minDepth(TreeNode root) {
-            
-    }
-    int dfs (TreeNode node, int, depth, int res) {
-        if (node == null) return res;
-        if (node.left == null && node.right == null)
-            return Math.min(res, depth);
-                
-        dfs(root.left, depth + 1, res);
-        dfs(root.right, depth + 1, res);
-    }
-}
-
-// dfs with stack
 // class Solution {
+//     int res = Integer.MAX_VALUE;
 //     public int minDepth(TreeNode root) {
-
+//         if (root == null) return 0;
+//         dfs(root, 1);
+//         return res;
+//     }
+//     void dfs (TreeNode node, int depth) {
+//         if (node == null) return;
+//         if (node.left == null && node.right == null) {
+//             res = Math.min(res, depth);
+//             return;
+//         }
+//         dfs(node.left, depth + 1);
+//         dfs(node.right, depth + 1);
 //     }
 // }
+
+// dfs with stack
+class Solution {
+    public int minDepth(TreeNode root) {
+        if (root == null) return 0; 
+        Stack<TreeNode> st = new Stack<>();
+        Stack<Integer> depthSt = new Stack<>();
+        st.push(root);
+        depthSt.push(1);
+        int min = Integer.MAX_VALUE;
+
+        while(! st.empty()) {
+            TreeNode node = st.pop();
+            int depth = depthSt.pop();
+            if (node.left == null && node.right == null) {
+                min = Math.min(min, depth);
+            }
+            if (node.right != null) {
+                st.push(node.right); // @important push right to stack first
+                depthSt.push(depth + 1);
+            }
+            if (node.left != null) {
+                st.push(node.left);
+                depthSt.push(depth + 1);
+            }
+        }
+        return min;
+    }
+}
 // @lc code=end
 

@@ -4,9 +4,6 @@ import java.util.*;
  *
  * [98] 验证二叉搜索树
  */
-
-import javax.swing.tree.TreeNode;
-
 // @lc code=start
 /**
  * Definition for a binary tree node.
@@ -22,8 +19,8 @@ import javax.swing.tree.TreeNode;
 //     public boolean isValidBST(TreeNode root) {
 //         return dfs(root, java.lang.Long.MIN_VALUE, java.lang.Long.MAX_VALUE);
 //     }
-//     private boolean dfs(TreeNode root, long min, long max) {
-//         return (root == null) || root.val > min && root.val < max && dfs(root.left, min, root.val) && dfs(root.right, root.val, max);
+//     private boolean dfs(TreeNode node, long min, long max) {
+//         return (node == null) || node.val > min && node.val < max && dfs(node.left, min, node.val) && dfs(node.right, node.val, max);
 //     }
 // }
 
@@ -33,7 +30,7 @@ import javax.swing.tree.TreeNode;
 // class Solution {
 //     long lastVal = Long.MIN_VALUE;
 //     public boolean isValidBST(TreeNode root) {
-//         return (root == null) || (isValidBST(root.left) && (lasVal < (lasVal = root.val)) && isValidBST(root.right));
+//         return (root == null) || (isValidBST(root.left) && lastVal < (lastVal = root.val) && isValidBST(root.right));
 //     }
 // }
 
@@ -43,12 +40,12 @@ import javax.swing.tree.TreeNode;
 //     public boolean isValidBST(TreeNode root) {
 //         return dfs(root, Long.MIN_VALUE, Long.MAX_VALUE);
 //     }
-//     boolean dfs(TreeNode root, long lower, long upper) {
-//         if (root == null) return true;
-//         if (root.val <= lower) return false;
-//         if (root.val >= upper) return false;
-//         if (!dfs(root.right, root.val, upper)) return false; // @important right first
-//         if (!dfs(root.left, lower, root.val)) return false;
+//     boolean dfs(TreeNode node, long lower, long upper) {
+//         if (node == null) return true;
+//         if (node.val <= lower) return false;
+//         if (node.val >= upper) return false;
+//         if (!dfs(node.right, node.val, upper)) return false; // @important right first
+//         if (!dfs(node.left, lower, node.val)) return false;
 //         return true;
 //     }
 // }
@@ -57,11 +54,11 @@ import javax.swing.tree.TreeNode;
 // @date Mar 06 2020
 // class Solution {
 //     Stack<TreeNode> st = new Stack<>();
-//     Stack<Integer> upperList = new Stack<>(), 
+//     Stack<Long> upperList = new Stack<>(), 
 //         lowerList = new Stack<>();
         
 //     public boolean isValidBST(TreeNode root) {
-//         Integer lower = null, upper = null, val;
+//         long lower = Long.MIN_VALUE, upper = Long.MAX_VALUE, val;
 //         update(root, lower, upper);
 //         while (!st.empty()) {
 //             root = st.pop();
@@ -69,9 +66,9 @@ import javax.swing.tree.TreeNode;
 //             upper = upperList.pop();
             
 //             if (root == null) continue;
-//             val = root.val;
-//             if (lower != null && val <= lower) return false;
-//             if (upper != null && val >= upper) return false;
+//             val = (long)root.val;
+//             if (val <= lower) return false;
+//             if (val >= upper) return false;
 
 //             update(root.right, val, upper); // @important right first
 //             update(root.left, lower, val);
@@ -79,8 +76,8 @@ import javax.swing.tree.TreeNode;
 //         return true;
 //     }
 
-//     void update(TreeNode root, Integer lower, Integer upper) {
-//         st.push(root);
+//     void update(TreeNode node, Long lower, Long upper) {
+//         st.push(node);
 //         lowerList.push(lower);
 //         upperList.push(upper);
 //     }
@@ -133,34 +130,35 @@ import javax.swing.tree.TreeNode;
 //     }
 // }
 
-class Solution {
-    long lastNodeVal = Long.MIN_VALUE;
-    public boolean isValidBST(TreeNode root) {
-        if (root == null)
-            return true;
+// @date Mar 06 2020
+// class Solution {
+//     long lastNodeVal = Long.MIN_VALUE;
+//     public boolean isValidBST(TreeNode root) {
+//         if (root == null)
+//             return true;
         
-        if (!isValidBST(root.left))
-            return false;
+//         if (!isValidBST(root.left))
+//             return false;
         
-        if (root.val <= lastNodeVal) 
-            return false;
-        lastNodeVal = (long) root.val;
+//         if (root.val <= lastNodeVal) 
+//             return false;
+//         lastNodeVal = (long) root.val;
 
-        if (!isValidBST(root.right))
-            return false;
+//         if (!isValidBST(root.right))
+//             return false;
 
-        return true;
-    }
-}
+//         return true;
+//     }
+// }
 
 // bfs with queue;
 // class Solution {
 //     Queue<TreeNode> queue = new LinkedList<>();
-//     Queue<Integer> upperList = new LinkedList<>(), 
+//     Queue<Long> upperList = new LinkedList<>(), 
 //         lowerList = new LinkedList<>();
         
 //     public boolean isValidBST(TreeNode root) {
-//         Integer lower = null, upper = null, val;
+//         long lower = Long.MIN_VALUE, upper = Long.MAX_VALUE, val;
 //         update(root, lower, upper);
 //         while (!queue.isEmpty()) {
 //             root = queue.poll();
@@ -168,16 +166,16 @@ class Solution {
 //             upper = upperList.poll();
 //             if (root == null) continue;
 //             val = root.val;
-//             if (lower != null && val <= lower) return false;
-//             if (upper != null && val >= upper) return false;
+//             if (val <= lower) return false;
+//             if (val >= upper) return false;
 //             update(root.left, lower, val);
 //             update(root.right, val, upper);
 //         }
 //         return true;
 //     }
 
-//     void update(TreeNode root, Integer lower, Integer upper) {
-//         queue.offer(root);
+//     void update(TreeNode node, long lower, long upper) {
+//         queue.offer(node);
 //         lowerList.offer(lower);
 //         upperList.offer(upper);
 //     }
