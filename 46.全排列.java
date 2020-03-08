@@ -63,50 +63,49 @@ import java.util.*;
 
 // better backtracking with adding 
 // @date Mar 07 2020
-// class Solution {
-//     List<List<Integer>> res = new ArrayList<>();
-//     public List<List<Integer>> permute(int[] nums) {
-//         backtrack(nums, new ArrayList<>(), new boolean[nums.length], 0);
-//         return res;
-//     }
-//     void backtrack(int[]nums, List<Integer> permutation, boolean[] used, int digit) {
-//         if (digit == nums.length) {
-//             res.add(new ArrayList<>(permutation));
-//             return;
-//         }
-//         for (int i = 0; i < nums.length; i ++) {
-//             if (!used[i]) {
-//                 permutation.add(nums[i]);
-//                 used[i] = true;
-//                 backtrack(nums, permutation, used, digit + 1);
-//                 permutation.remove(permutation.size() - 1);
-//                 used[i] = false;
-//             }
-//         }
-//     }
-// }
-
-
-// better backtracking with swapping
 class Solution {
     List<List<Integer>> res = new ArrayList<>();
     public List<List<Integer>> permute(int[] nums) {
-        List<Integer> numsList = IntStream.of(nums)
-            .boxed().collect(Collectors.toCollection(ArrayList::new));
-        backtrack(numsList, 0);
+        backtrack(nums, new ArrayList<>(), new boolean[nums.length]);
         return res;
     }
-    void backtrack(List<Integer> nums, int i) {
-        if (i == nums.size()) {
-            res.add(new ArrayList<>(nums));
-            return ;
+    void backtrack(int[]nums, List<Integer> permutation, boolean[] used) {
+        if (permutation.size() == nums.length) {
+            res.add(new ArrayList<>(permutation));
+            return;
         }
-        for (int j = i; j < nums.size(); j ++) {
-            Collections.swap(nums, i, j);
-            backtrack(nums, i + 1);
-            Collections.swap(nums, j, i);
+        for (int i = 0; i < nums.length; i ++) {
+            if (used[i]) continue;
+            permutation.add(nums[i]);
+            used[i] = true;
+            backtrack(nums, permutation, used);
+            permutation.remove(permutation.size() - 1);
+            used[i] = false;
         }
     }
 }
+
+
+// better backtracking with swapping
+// class Solution {
+//     List<List<Integer>> res = new ArrayList<>();
+//     public List<List<Integer>> permute(int[] nums) {
+//         List<Integer> numsList = IntStream.of(nums)
+//             .boxed().collect(Collectors.toCollection(ArrayList::new));
+//         backtrack(numsList, 0);
+//         return res;
+//     }
+//     void backtrack(List<Integer> nums, int i) {
+//         if (i == nums.size()) {
+//             res.add(new ArrayList<>(nums));
+//             return ;
+//         }
+//         for (int j = i; j < nums.size(); j ++) {
+//             Collections.swap(nums, i, j);
+//             backtrack(nums, i + 1);
+//             Collections.swap(nums, j, i);
+//         }
+//     }
+// }
 // @lc code=end
 

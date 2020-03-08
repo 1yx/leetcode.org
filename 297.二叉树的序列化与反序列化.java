@@ -1,7 +1,4 @@
-import java.util.Queue;
-
-import javax.swing.tree.TreeNode;
-
+import java.util.*;
 /*
  * @lc app=leetcode.cn id=297 lang=java
  *
@@ -21,7 +18,7 @@ import javax.swing.tree.TreeNode;
 
 // bfs
 // @date 07 2020
-public class Codec {
+class Codec {
 
     // Encodes a tree to a single string.
     public String serialize(TreeNode root) {
