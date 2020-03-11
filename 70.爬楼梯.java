@@ -4,7 +4,6 @@
  * [70] 爬楼梯
  */
 
-// @lc code=start
 // @date Feb 13 2020
 /* class Solution {
     public int climbStairs(int n) {
@@ -37,14 +36,29 @@
 
 // 斐波那契公式
 // @date Mar 02 2020
-class Solution {
-    public int climbStairs(int i) {
-        int n = i + 1;
-        double sqrt_5 = Math.sqrt(5);
-        double fib_n = Math.pow((1 + sqrt_5) / 2, n) - Math.pow((1 - sqrt_5) / 2, n);
-        return (int)(fib_n / sqrt_5);
-    }
-}
+// class Solution {
+//     public int climbStairs(int i) {
+//         int n = i + 1;
+//         double sqrt_5 = Math.sqrt(5);
+//         double fib_n = Math.pow((1 + sqrt_5) / 2, n) - Math.pow((1 - sqrt_5) / 2, n);
+//         return (int)(fib_n / sqrt_5);
+//     }
+// }
+
+// DP
+// @date Mar 11 2020
+// @lc code=start
+// class Solution {
+//     public int climbStairs(int n) {
+//         if (n < 3) return n;
+//         int[] dp = new int [n+1];
+//         dp[1] = 1;
+//         dp[2] = 2;
+//         for (int i = 3; i <= n; i++)
+//             dp[i] = dp[i-1] + dp[i-2];
+//         return dp[n];
+//     }
+// }
 
 // @lc code=end
 
