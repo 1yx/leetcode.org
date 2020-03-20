@@ -1,0 +1,100 @@
+* BFS
+
+* Two-End BFS
+** 127
+*** problem
+*** solution
+#+begin_src sh :results output :wrap source java
+sed -n '/\@solution two\-end bfs/,/^}/{/\@solution two\-end bfs/!p}' solutions/127.*.java
+#+end_src
+
+#+RESULTS:
+#+begin_source java
+class Solution {
+    public int ladderLength(String beginWord, String endWord, List<String> wordList) {
+        Set<String> dict = new HashSet<>(wordList), temp = new HashSet<>();
+        Set<String> front = new HashSet<>(), back = new HashSet<>();
+        if (!dict.contains(endWord)) return 0;
+        int step = 1;
+        front.add(beginWord);
+        back.add(endWord);
+        dict.remove(beginWord);
+        while(!front.isEmpty() && !back.isEmpty()) {
+            if (front.size() > back.size()) { // todo
+                temp = front;
+                front = back;
+                back = temp;
+            }
+            temp = new HashSet<>();
+            for(String word : front) {
+                for(int i = beginWord.length() - 1; i >= 0 ; i --) {
+                    char[] letters = word.toCharArray();
+                    for (char alphabet = 'a'; alphabet <= 'z'; alphabet ++) {
+                        if (letters[i] == alphabet) continue;
+                        letters[i] = alphabet;
+                        String target = String.valueOf(letters);
+                        if (back.contains(target)) return step + 1;
+                        if (dict.contains(target)) {
+                            temp.add(target);
+                            dict.remove(target);
+                        }
+                    }
+                }
+            }
+            front = temp;
+            step ++;
+        }
+        return 0;
+    }
+}
+#+end_source
+
+
+** 433
+#+begin_src sh :results output :wrap source java
+sed -n '/\@solution two\-end bfs/,/^}/{/\@solution two\-end bfs/!p}' solutions/433.*.java
+#+end_src
+
+#+RESULTS:
+#+begin_source java
+// todo hashset is better than linkedlist
+class Solution {
+    public int minMutation(String start, String end, String[] bank) {
+        Set<String> dict = new HashSet<>(Arrays.asList(bank)), temp = new HashSet<>();
+        Set<String> front = new HashSet<>(), back = new HashSet<>();
+        if (!dict.contains(end)) return -1;
+        char[] nucleobases = {'A', 'C', 'G', 'T'};
+        int step = 0;
+        front.add(start);
+        back.add(end);
+        dict.remove(start);
+        while (!front.isEmpty() && !back.isEmpty()) {
+            if (front.size() > back.size()) {
+                temp = front;
+                front = back;
+                back = temp;
+            }
+            temp = new HashSet<>();
+            for (String sequence : front) {
+                for (int i = sequence.length() - 1; i >= 0; i --) {
+                    char[] genes = sequence.toCharArray();
+                    for (char base : nucleobases) {
+                        if (genes[i] == base) continue;
+                        genes[i] = base;
+                        String mutation = String.valueOf(genes);
+                        if (back.contains(mutation)) return step + 1;
+                        if (dict.contains(mutation)) {
+                            dict.remove(mutation);
+                            temp.add(mutation);
+                        }
+
+                    }
+                }
+            }
+            step ++;
+            front = temp;
+        }
+        return -1;
+    }
+}
+#+end_source
