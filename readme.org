@@ -1,5 +1,8 @@
 * leetcode.org
 This is a plain-text file store all throughts when I learn from Leetcode using org-mode in Emacs.
-leetcode.org can copy the solution which I stored in local, and show up in the file, by just clicking `C-c C-c` in sed source code.
+
+[[file:./leetcode.org][leetcode.org]] can copy the solution which I stored in local, and show up in the file, by just clicking `C-c C-c` in sed source code.
+
 If you want to use it, empty `./solutions` and `./problems`, login in leetcode by [[https://github.com/leetcode-tools/leetcode-cli][vsc-leetcode-cli]](forked leetcode-cli), create symbolic link from `./solutions` to `~/.leetcode`, then write some sed script to get codes.
-I use `./script/index.js` to fetch the problems which have ACed from leetcode.com or to markdown files. As the same, use sed to show up in `leetcode.org`. This can be better by write a leetcode-cli plugin, work in process.
+
+I use `./script/index.js` to fetch the problems which have ACed from leetcode.com to markdown files. As the same, cat file to show up in `leetcode.org`. This can be better by writting a leetcode-cli plugin, work in process.

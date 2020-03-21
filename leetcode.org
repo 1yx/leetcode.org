@@ -1,5 +1,6 @@
 * BFS
-
+有一种替换queue的方法
+还有一种poll queue的方法
 * Two-End BFS
 ** 127
 #+begin_src sh :results output :wrap source markdown
@@ -188,3 +189,6 @@ class Solution {
     }
 }
 #+end_source
+
+* A* (Heuristic Search)
+h(n)
