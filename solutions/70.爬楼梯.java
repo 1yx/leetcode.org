@@ -19,8 +19,9 @@
         return sol3;
     }
 } */
-// 缓存递归
+
 // @date Feb 20 2020
+// @solution backtracking 2
 // class Solution {
 //     // an int is a primitive type and cannot be null
 //     public Integer[] sol = new Integer[100];
@@ -47,7 +48,6 @@
 
 // DP
 // @date Mar 11 2020
-// @lc code=start
 // class Solution {
 //     public int climbStairs(int n) {
 //         if (n < 3) return n;
@@ -60,5 +60,19 @@
 //     }
 // }
 
-// @lc code=end
+// @lc code=start
+// @date Mar 22 2020
+// @solution backtracking 1
+class Solution {
+    int[] sol = new int[100];
+    public int climbStairs(int i) {
+        sol[1] = 1;
+        sol[2] = 2;
+        if (i <= 2) return sol[i];
+        if (sol[i] != 0) return sol[i];
+        sol[i] = climbStairs(i - 1) + climbStairs(i - 2);
+        return sol[i];
+    }
+}
 
+// @lc code=end

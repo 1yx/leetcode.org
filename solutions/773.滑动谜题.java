@@ -50,7 +50,7 @@ import java.util.*;
 
 // @lc code=start
 // @date Mar 21 2020
-// @solutions a* 
+// @solution a* 
 class Solution {
     public int slidingPuzzle(int[][] board) {
         Box box = new Box(board);

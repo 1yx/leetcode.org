@@ -1,8 +1,218 @@
+* Disjoint-set
+** 200.岛屿数量
+#+begin_src sh :results output :wrap source markdown
+cat problems/200.*.md
+#+end_src
+
+#+RESULTS:
+#+begin_source markdown
+给定一个由 `'1'`（陆地）和 `'0'`（水）组成的的二维网格，计算岛屿的数量。一个岛被水包围，并且它是通过水平方向或垂直方向上相邻的陆地连接而成的。你可以假设网格的四个边均被水包围。
+
+,**示例 1:**
+
+,**输入:**
+11110
+11010
+11000
+00000
+
+,**输出:** 1
+
+,**示例 2:**
+
+,**输入:**
+11000
+11000
+00100
+00011
+
+,**输出:** 3
+[https://leetcode-cn.com/problems/number-of-islands/description/]
+#+end_source
+
+#+begin_src sh :results output :wrap source java
+sed -n '/\@solution disjoint\-set/,/^}/{/\@solution disjoint\-set/!p}' solutions/200.*.java
+#+end_src
+
+#+RESULTS:
+#+begin_source java
+class Solution {
+    public int numIslands(char[][] grid) {
+        int rl = grid.length, cl = grid[0].length, waterCount = 0;
+        UnionFind uf = new UnionFind(rl * cl);
+        for (int r = 0; r < rl; r ++) {
+            for (int c = 0; c < cl; c ++) {
+                if (grid[r][c] == '1') {
+                    if (r > 0 && grid[r - 1][c] == '1')
+                        uf.union(r * cl + c, (r - 1) * cl +c);
+                    else if (c > 0 && grid[r][c - 1] == '1')
+                        uf.union(r * cl + c, r * cl + c - 1);
+                } else {
+                    waterCount ++;
+                }
+            }
+        }
+        return uf.count - waterCount;
+    }
+    class UnionFind {
+        int count = 0;
+        int[] parent;
+        public UnionFind(int n) {
+            count = n;
+            parent = new int[n];
+            for (int i = 0; i < n; i ++)
+                parent[i] = i;
+        }
+        public int find(int p) {
+            while (p != parent[p]) {
+                parent[p] = parent[parent[p]];
+                p = parent[p];
+            }
+            return p;
+        }
+        public void union(int p, int q) {
+            if (p == q) return;
+            int rp = find(p);
+            int rq = find(q);
+            if (rp == rq) return;
+            parent[rp] = rq;
+            count --;
+        }
+    }
+}
+#+end_source
+
+** 547 朋友圈
+#+begin_src sh :results output :wrap source markdown
+cat problems/547.*.md
+#+end_src
+
+#+begin_src sh :results output :wrap source java
+  sed -n '/\@solution disjoint\-set/,/^}/{/\@solution disjoint\-set/!p}'
+  solutions/547.*.java
+#+end_src
+
+#+RESULTS:
+#+begin_source java
+class Solution {
+    public int findCircleNum(int[][] M) {
+        if (M == null || M.length == 0) return 0;
+        int len = M.length;
+        UnionFind uf = new UnionFind(len);
+        for (int i = 0; i < len; i ++) {
+            for (int j = 0; j < len; j ++) {
+                if (M[i][j] == 1)
+                    uf.union(i, j);
+            }
+        }
+        return uf.count;
+    }
+    class UnionFind {
+        int count = 0;
+        int[] parent;
+        public UnionFind(int n) {
+            count = n;
+            parent = new int[n];
+            for (int i = 0; i < n; i ++)
+                parent[i] = i;
+        }
+        public int find(int p) {
+            while (p != parent[p]) {
+                parent[p] = parent[parent[p]];
+                p = parent[p];
+            }
+            return p;
+        }
+        public void union(int p, int q) {
+            int rp = find(p);
+            int rq = find(q);
+            if (rp == rq) return;
+            parent[rp] = rq;
+            count --;
+        }
+    }
+}
+#+end_source
+
+** 130 被围绕的区域
+#+begin_src sh :results output :wrap source markdown
+cat problems/130.*.md
+#+end_src
+
+#+begin_src sh :results output :wrap source java
+  sed -n '/\@solution disjoint\-set/,/^}/{/\@solution disjoint\-set/!p}' solutions/130.*.java
+#+end_src
+
+#+RESULTS:
+#+begin_source java
+class Solution {
+    public void solve(char[][] board) {
+        if (board == null || board.length == 0) return;
+        int rl = board.length, cl = board[0].length;
+        UnionFind uf = new UnionFind(rl * cl + 1);
+        int O = rl * cl;
+        for (int r = 0; r < rl; r ++) {
+            for (int c = 0; c < cl; c ++) {
+                if (board[r][c] == 'X') continue;
+                if (r == 0 || c == 0 || r == rl - 1 || c == cl - 1) {
+                    uf.union(r * cl + c, O);
+                    continue;
+                }
+                if (board[r - 1][c] == 'O')
+                    uf.union(r * cl + c, (r - 1) * cl + c);
+                if (board[r + 1][c] == 'O')
+                    uf.union(r * cl + c, (r + 1) * cl + c);
+                if (board[r][c - 1] == 'O')
+                    uf.union(r * cl + c, r * cl + c - 1);
+                if (board[r][c + 1] == 'O')
+                    uf.union(r * cl + c, r * cl + c + 1);
+            }
+        }
+        for (int r = 0; r < rl; r ++) {
+            for (int c = 0; c < cl; c ++) {
+                if (board[r][c] == 'X') continue;
+                if (!uf.isConnected(r * cl + c, O))
+                    board[r][c] = 'X';
+            }
+        }
+    }
+    class UnionFind {
+        int count = 0;
+        int[] parent;
+        public UnionFind(int n) {
+            count = n;
+            parent = new int[n];
+            for (int i = 0; i < n; i ++) {
+                parent[i] = i;
+            }
+        }
+        public int find(int p) {
+            while (p != parent[p]) {
+                parent[p] = parent[parent[p]];
+                p = parent[p];
+            }
+            return p;
+        }
+        public void union(int p, int q) {
+            if (p == q) return;
+            int rp = find(p);
+            int rq = find(q);
+            if (rp == rq) return;
+            parent[rp] = rq;
+            count --;
+        }
+        public boolean isConnected(int p, int q) {
+            return find(p) == find(q);
+        }
+    }
+}
+#+end_source
+
+
 * BFS
-有一种替换queue的方法
-还有一种poll queue的方法
+有一种替换set(queue)的方法、一种poll queue的方法
 * Two-End BFS
-** 127
+** 127 单词接龙
 #+begin_src sh :results output :wrap source markdown
 cat problems/127.*.md
 #+end_src
@@ -93,7 +303,7 @@ class Solution {
 #+end_source
 
 
-** 433
+** 433 最小基因变化
 #+begin_src sh :results output :wrap source markdown
 cat problems/433.*.md
 #+end_src
@@ -190,5 +400,478 @@ class Solution {
 }
 #+end_source
 
+
 * A* (Heuristic Search)
-h(n)
+两种实现方式:
+1. inner class implements Comparable
+2. comparator to priority queue
+
+** 1091 二进制矩阵的最短路径
+#+begin_src sh :results output :wrap source markdown
+cat problems/1091.*.md
+#+end_src
+
+#+begin_src sh :results output :wrap source java
+sed -n '/\@solution a\*/,/^}/{/\@solution a\*/!p}' solutions/1091.*.java
+#+end_src
+
+#+RESULTS:
+#+begin_source java
+class Solution {
+    int n;
+    public int shortestPathBinaryMatrix(int[][] grid) {
+        n = grid.length;
+        if (grid[0][0] == 1 || grid[n - 1][n - 1] == 1) return -1;
+        if (n == 1) return 1;
+        int[][] dir = {
+            {-1, 0}, {1, 0}, {0, -1}, {0, 1},
+            {-1, 1}, {-1, -1}, {1, -1}, {1, 1}
+        };
+        Node start = new Node(0, 0, grid[0][0] = 1);
+        Queue<Node> queue = new PriorityQueue<>();
+        queue.offer(start);
+        while (!queue.isEmpty()) {
+            Node node = queue.poll();
+            int step = grid[node.x][node.y];
+            for (int[] d : dir) {
+                int x = node.x + d[0];
+                int y = node.y + d[1];
+                if (x == n - 1 && y == n - 1) return step + 1;
+                if (x < 0 || x >= n || y < 0 || y >= n) continue;
+                if (grid[x][y] != 0 && grid[x][y] <= step + 1) continue;
+                Node next = new Node(x, y, grid[x][y] = step + 1);
+                queue.offer(next);
+            }
+        }
+        return -1;
+    }
+
+    class Node implements Comparable<Node> {
+        int x;
+        int y;
+        int step;
+        int distance;
+        int heuristic;
+
+        public Node(int x, int y, int step) {
+            this.x = x;
+            this.y = y;
+            this.step = step;
+            this.distance = Math.max(n - 1 - x, n - 1 - y);
+            this.heuristic = this.distance + this.step;
+        }
+
+        @Override
+        public int compareTo(Node o) {
+            return this.heuristic - o.heuristic;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof Node)) return false;
+            Node node = (Node) o;
+            return x == node.x && y == node.y;
+        }
+
+        @Override
+        public int hashCode() {
+            return Integer.hashCode(x * n + y);
+        }
+    }
+}
+#+end_source
+
+** 773
+#+begin_src sh :results output :wrap source markdown
+cat problems/773.*.md
+#+end_src
+
+#+begin_src sh :results output :wrap source java
+sed -n '/\@solution a\*/,/^}/{/\@solution a\*/!p}' solutions/773.*.java
+#+end_src
+
+#+RESULTS:
+#+begin_source java
+class Solution {
+    public int slidingPuzzle(int[][] board) {
+        Box box = new Box(board);
+        int[] endBoard = {1, 2, 3, 4, 5, 0};
+        int[] wrongBoard = {1, 2, 3, 5, 4, 0};
+        if (Arrays.equals(box.board, endBoard)) return 0;
+        if (Arrays.equals(box.board, wrongBoard)) return -1;
+        HashSet<Box> visited = new HashSet<>();
+        PriorityQueue<Box> queue = new PriorityQueue<>();
+        int[][] dir = {
+            {1, 3}, {0, 2, 4}, {1, 5},
+            {0, 4}, {1, 3, 5}, {2, 4}
+        };
+        queue.offer(box);
+        visited.add(box);
+        while (!queue.isEmpty()) {
+            box = queue.poll();
+            for (int nextZero : dir[box.zero]) {
+                int[] nextBoard = Arrays.copyOf(box.board, 6);
+                nextBoard[box.zero] = nextBoard[nextZero];
+                nextBoard[nextZero] = 0;
+                if (Arrays.equals(nextBoard, endBoard)) return box.step + 1;
+                if (Arrays.equals(nextBoard, wrongBoard)) return -1;
+                Box next = new Box(nextBoard, nextZero, box.step + 1);
+                if (visited.contains(next)) continue;
+                queue.offer(next);
+                visited.add(next);
+            }
+        }
+        return -1;
+    }
+
+    static class Box implements Comparable<Box> {
+        int[] board;
+        int zero;
+        int step; // g(n)
+        int distance; // h(n)
+        int f; // f(n) = g(n) + h(n)
+
+        public Box(int[][] board) {
+            this.board = new int[6];
+            for (int i = 0; i < 6; i++) {
+                this.board[i] = board[i / 3][i % 3];
+                if (this.board[i] == 0) this.zero = i;
+            }
+            this.step = 0;
+            this.distance = calcDistance();
+            this.f = this.step + this.distance;
+        }
+
+        public Box(int[] board, int zero, int step) {
+            this.board = board;
+            this.zero = zero;
+            this.step = step;
+            this.distance = calcDistance();
+            this.f = this.step + this.distance;
+        }
+
+        private int calcDistance() {
+            int distance = 0;
+            for (int i = 0; i < 6; i++) {
+                int v = board[i] - 1; // target idx of board;
+                distance += Math.abs(v / 3 - i / 3) + Math.abs(v % 3 - i % 3);// row + col
+            }
+            return distance;
+        }
+
+        @Override
+        public int compareTo(Box box) {
+            return this.f - box.f;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof Box)) return false;
+            Box box = (Box) o;
+            return zero == box.zero && Arrays.equals(board, box.board);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = Objects.hash(zero);
+            result = 31 * result + Arrays.hashCode(board);
+            return result;
+        }
+    }
+}
+#+end_source
+
+* DFS
+** backtracking
+*** 70 爬楼梯
+#+begin_src sh :results output :wrap source markdown
+cat problems/70.*.md
+#+end_src
+
+#+RESULTS:
+#+begin_source markdown
+假设你正在爬楼梯。需要 _n_ 阶你才能到达楼顶。
+
+每次你可以爬 1 或 2 个台阶。你有多少种不同的方法可以爬到楼顶呢？
+
+,**注意：**给定 _n_ 是一个正整数。
+
+,**示例 1：**
+
+,**输入：** 2
+,**输出：** 2
+,**解释：** 有两种方法可以爬到楼顶。
+1.  1 阶 + 1 阶
+2.  2 阶
+
+,**示例 2：**
+
+,**输入：** 3
+,**输出：** 3
+,**解释：** 有三种方法可以爬到楼顶。
+1.  1 阶 + 1 阶 + 1 阶
+2.  1 阶 + 2 阶
+3.  2 阶 + 1 阶
+[https://leetcode-cn.com/problems/climbing-stairs/description/]
+#+end_source
+
+#+begin_src sh :results output :wrap source java
+sed -n '/\@solution backtracking 1/,/^}/{/\@solution backtracking 1/!p}' solutions/70.*.java
+#+end_src
+
+#+RESULTS:
+#+begin_source java
+class Solution {
+    int[] sol = new int[100];
+    public int climbStairs(int i) {
+        sol[1] = 1;
+        sol[2] = 2;
+        if (i <= 2) return sol[i];
+        if (sol[i] != 0) return sol[i];
+        sol[i] = climbStairs(i - 1) + climbStairs(i - 2);
+        return sol[i];
+    }
+}
+#+end_source
+
+#+begin_src sh :results output :wrap source java
+sed -n 's/\/\/\s//; /\@solution backtracking 2/,/^}/{/\@solution backtracking 2/!p}' solutions/70.*.java
+#+end_src
+
+#+RESULTS:
+#+begin_source java
+class Solution {
+    // an int is a primitive type and cannot be null
+    public Integer[] sol = new Integer[100];
+    public int climbStairs(int i) {
+        sol[1] = 1;
+        sol[2] = 2;
+        if (i <= 2) return sol[i];
+        if (sol[i - 1] == null) sol[i - 1] = climbStairs(i - 1);
+        if (sol[i - 2] == null) sol[i - 2] = climbStairs(i - 2);
+        return sol[i-1] + sol[i-2];
+    }
+}
+#+end_source
+
+*** 22 括号生成
+#+begin_src sh :results output :wrap source markdown
+cat problems/22.*.md
+#+end_src
+
+#+RESULTS:
+#+begin_source markdown
+给出 _n_ 代表生成括号的对数，请你写出一个函数，使其能够生成所有可能的并且**有效的**括号组合。
+
+例如，给出 _n_ \= 3，生成结果为：
+
+\[
+  "((()))",
+  "(()())",
+  "(())()",
+  "()(())",
+  "()()()"
+\]
+[https://leetcode-cn.com/problems/generate-parentheses/description/]
+#+end_source
+
+#+begin_src sh :results output :wrap source java
+sed -n '/\@solution backtracking/,/^}/{/\@solution backtracking/!p}' solutions/22.*.java
+#+end_src
+
+#+RESULTS:
+#+begin_source java
+class Solution {
+    List<String> res = new ArrayList<>();
+    public List<String> generateParenthesis(int n) {
+        dfs(n, "", 0, 0);
+        return res;
+    }
+    void dfs(int n, String str, int l, int r) {
+        if (l == n && r == n) {
+            res.add(str);
+            return;
+        }
+        if (l < n)
+            dfs(n, str + "(", l + 1, r);
+        if (r < l)
+            dfs(n, str + ")", l, r + 1);
+    }
+}
+#+end_source
+
+*** 37 解数独
+#+begin_src sh :results output :wrap source markdown
+cat problems/37.*.md
+#+end_src
+
+#+begin_src sh :results output :wrap source java
+sed -n '/\@solution backtracking/,/^}/{/\@solution backtracking/!p}' solutions/37.*.java
+#+end_src
+
+#+RESULTS:
+#+begin_source java
+class Solution {
+    public void solveSudoku(char[][] board) {
+        dfs(board, 0);
+    }
+
+    boolean dfs (char[][] board, int pos) {
+        if (pos == 81) return true;
+
+        int r = pos / 9, c = pos % 9;
+        if (board[r][c] != '.') return dfs(board, pos + 1);
+        char digit = '0';
+        for (boolean valid: getValid(board, r, c)) {
+            digit ++;
+            if (!valid) continue;
+            board[r][c] = digit;
+            if (dfs(board, pos + 1)) return true;
+        }
+
+        board[r][c] = '.';
+        return false;
+    }
+    boolean[] getValids(char[][] board, int r, int c) {
+        boolean[] valids = new boolean[9];
+        Arrays.fill(valids, true);
+        for (int i = 0; i < 9; i ++) {
+            char[] toValid = {
+                board[r][i], // current row
+                board[i][c], // current column
+                board[r/3*3+i/3][c/3*3+i%3] // current block
+            };
+            // if any toValid has digit, then false.
+            for (char tv: toValid)
+                if (tv != '.')
+                    valids[tv - '1'] = false;
+        }
+        return valid;
+    }
+}
+#+end_source
+
+*** 51 n皇后
+#+begin_src sh :results output :wrap source markdown
+cat problems/51.*.md
+#+end_src
+
+#+begin_src sh :results output :wrap source java
+sed -n '/\@solution backtracking/,/^}/{/\@solution backtracking/!p}' solutions/51.*.java
+#+end_src
+
+#+RESULTS:
+#+begin_source java
+class Solution {
+    int rl, cl;
+    List<List<String>> res = new ArrayList<>();
+    public List<List<String>> solveNQueens(int n) {
+        rl = cl = n;
+        dfs(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+        return res;
+    }
+    void dfs(List<Integer> queenInRows, List<Integer> lowerRight, List<Integer> lowerLeft) {
+        int r = queenInRows.size();
+        if (r == rl) {
+            List<String> solution = new ArrayList<>();
+            for (int idx: queenInRows) {
+                solution.add(".".repeat(idx) + "Q" + ".".repeat(rl - 1 - idx));
+            }
+            res.add(solution);
+            return;
+        }
+        for (int c = 0; c < cl; c ++) {
+            if (queenInRows.contains(c)) continue;
+            // if x1 - y1 = x2 - y2, [x1, y1] and [x2, y2] are in same lowerright line;
+            if (lowerRight.contains(r - c)) continue;
+            // if x1 + y1 = x2 + y2, [x1, y1] and [x2, y2] are in same lowerleft line;
+            if (lowerLeft.contains(r + c)) continue;
+            queenInRows.add(c);
+            lowerRight.add(r - c);
+            lowerLeft.add(r + c);
+            dfs(new ArrayList<>(queenInRows), new ArrayList<>(lowerRight), new ArrayList<>(lowerLeft));
+            int lastIdx = r;
+            queenInRows.remove(lastIdx);
+            lowerRight.remove(lastIdx);
+            lowerLeft.remove(lastIdx);
+        }
+    }
+}
+#+end_source
+
+* Trie
+** 212 单词搜索
+#+begin_src sh :results output :wrap source markdown
+cat problems/212.*.md
+#+end_src
+
+#+begin_src sh :results output :wrap source java
+sed -n '/\@solution trie/,/^}/{/\@solution trie/!p}' solutions/212.*.java
+#+end_src
+
+#+RESULTS:
+#+begin_source java
+class Solution {
+    int rl, cl;
+    Set<String> res;
+    boolean[][] visited;
+    public List<String> findWords(char[][] board, String[] words) {
+        rl = board.length;
+        cl = board[0].length;
+        res = new HashSet<>();
+        Trie trie = new Trie();
+
+        for (String s: words)
+            trie.insert(s);
+
+        for (int r = 0; r < rl; r ++) {
+            for (int c = 0; c < cl; c ++) {
+                dfs(board, r, c, trie.root);
+            }
+        }
+        return new ArrayList<String>(res);
+    }
+
+    void dfs(char[][] board, int r, int c, TrieNode node) {
+        if (r < 0 || c < 0 || r >= rl || c >= cl || board[r][c] == '\0')
+            return;
+        node = node.children[board[r][c] - 'a'];
+        if (node == null)
+            return;
+        if (node.isEnd)
+             res.add(node.val);
+
+        char tmp = board[r][c];
+        board[r][c] = '\0';
+        dfs(board, r + 1, c, node);
+        dfs(board, r - 1, c, node);
+        dfs(board, r, c + 1, node);
+        dfs(board, r, c - 1, node);
+        board[r][c] = tmp;
+    }
+
+    class Trie {
+        public TrieNode root = new TrieNode();
+        public void insert (String str) {
+            TrieNode node = root;
+            for(char c : str.toCharArray()) {
+                if (node.children[c - 'a'] == null)
+                    node.children[c - 'a'] = new TrieNode();
+                node = node.children[c - 'a'];
+            }
+            node.isEnd = true;
+            node.val = str;
+        }
+    }
+    class TrieNode {
+        public String val;
+        public TrieNode[] children;
+        public boolean isEnd = false;
+        TrieNode() {
+            children = new TrieNode[26];
+        }
+    }
+}
+#+end_source

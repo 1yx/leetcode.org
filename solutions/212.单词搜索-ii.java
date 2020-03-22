@@ -67,6 +67,7 @@ import java.util.*;
 
 // @lc code=start
 // @date Mar 19 2020
+// @solution trie
 class Solution {
     int rl, cl;
     Set<String> res;
