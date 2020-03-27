@@ -481,7 +481,8 @@ class Solution {
 
 
 ** 773
-#+begin_src sh :results output :wrap source markdaown
+#+begin_src sh :results output :wrap source markda
+own
 cat problems/773.*.md
 #+end_src
 

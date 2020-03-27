@@ -114,45 +114,146 @@ import java.util.*;
 //     }
 // }
 
-// @lc code=start
+
 // @date Mar 20 2020
 // @solution two-end bfs best
+// class Solution {
+//     public int ladderLength(String beginWord, String endWord, List<String> wordList) {
+//         Set<String> dict = new HashSet<>(wordList), temp = new HashSet<>();
+//         Set<String> front = new HashSet<>(), back = new HashSet<>();
+//         if (!dict.contains(endWord)) return 0;
+//         int step = 1;
+//         front.add(beginWord);
+//         back.add(endWord);
+//         dict.remove(beginWord);
+//         while(!front.isEmpty() && !back.isEmpty()) {
+//             if (front.size() > back.size()) { // todo
+//                 temp = front;
+//                 front = back;
+//                 back = temp;
+//             }
+//             temp = new HashSet<>();
+//             for(String word : front) {
+//                 for(int i = beginWord.length() - 1; i >= 0 ; i --) {
+//                     char[] letters = word.toCharArray();
+//                     for (char alphabet = 'a'; alphabet <= 'z'; alphabet ++) {
+//                         if (letters[i] == alphabet) continue;
+//                         letters[i] = alphabet;
+//                         String target = String.valueOf(letters);
+//                         if (back.contains(target)) return step + 1;
+//                         if (dict.contains(target)) {
+//                             temp.add(target);
+//                             dict.remove(target);
+//                         }
+//                     }
+//                 }
+//             } 
+//             front = temp;
+//             step ++;
+//         }
+//         return 0;
+//     }
+// }
+
+// class Solution {
+//     int step;
+//     public int ladderLength(String beginWord, String endWord, List<String> wordList) {
+//         Set<String> dict = new HashSet<>(wordList);
+//         step = 0
+//         dfs(dict, new HashSet<>(), beginWord, endWord);
+//         return step;
+//     }
+//     void dfs(Set<String> dict, String current, String target) { 
+//         if (current == target) 
+//             return;
+            
+//         char[] letters = current.toCharArray();
+//         for(int i = 0; i < letters.length; i ++) {
+//             for (char alphabet = 'a'; alphabet <= 'z'; alphabet ++) {
+//                 char c = letters[i];
+//                 letters[i] = alphabet;
+//                 String word = String.valueOf(letters);
+//                 if (dict.contains(word)) {
+//                     dict.remove(word);
+//                     dfs(dict, word, target);
+//                     dict.add(word);
+//                 }
+//             }
+//         }
+//     }
+// }
+
+// class Solution {
+//     public int ladderLength(String beginWord, String endWord, List<String> wordList) {
+//         Set<String> dict = new HashSet<>(wordList);
+//         if (!dict.contains(endWord)) return 0;
+//         Stack<String> stack = new Stack<>();
+//         stack.push(beginWord);
+//         dict.remove(beginWord);
+//         Map<String, Integer> steps = new HashMap<>();
+//         steps.put(beginWord, 1);
+//         while (!stack.isEmpty()) {
+//             String word = stack.pop();
+//             // System.out.println(word);
+//             // System.out.println(steps.get(word));
+//             for (int j = word.length() - 1; j >= 0; j --) {
+//                 char[] letter = word.toCharArray();
+//                 for (char alphabet = 'a'; alphabet <= 'z'; alphabet ++) {
+//                     if (letter[j] == alphabet) continue;
+//                     letter[j] = alphabet;
+//                     String newWord = new String(letter);
+//                     if (newWord.equals(endWord)) {
+//                         // System.out.println(newWord);
+//                         // System.out.println(steps.get(word) + 1);
+//                         return steps.get(word) + 1;
+//                     } 
+//                     if (steps.containsKey(newWord) && steps.get(newWord) > steps.get(word) + 1) {
+//                         steps.put(newWord, steps.get(word) + 1);
+//                     }
+//                     if (dict.contains(newWord)) {
+//                         stack.push(newWord);
+//                         dict.remove(newWord);
+//                         steps.put(newWord, steps.get(word) + 1);
+//                     }
+//                 }
+//             }
+//         }
+//         return 0;
+//     }
+// }
+// @lc code=start
 class Solution {
+    int res = Integer.MAX_VALUE;
     public int ladderLength(String beginWord, String endWord, List<String> wordList) {
-        Set<String> dict = new HashSet<>(wordList), temp = new HashSet<>();
-        Set<String> front = new HashSet<>(), back = new HashSet<>();
-        if (!dict.contains(endWord)) return 0;
-        int step = 1;
-        front.add(beginWord);
-        back.add(endWord);
-        dict.remove(beginWord);
-        while(!front.isEmpty() && !back.isEmpty()) {
-            if (front.size() > back.size()) { // todo
-                temp = front;
-                front = back;
-                back = temp;
-            }
-            temp = new HashSet<>();
-            for(String word : front) {
-                for(int i = beginWord.length() - 1; i >= 0 ; i --) {
-                    char[] letters = word.toCharArray();
-                    for (char alphabet = 'a'; alphabet <= 'z'; alphabet ++) {
-                        if (letters[i] == alphabet) continue;
-                        letters[i] = alphabet;
-                        String target = String.valueOf(letters);
-                        if (back.contains(target)) return step + 1;
-                        if (dict.contains(target)) {
-                            temp.add(target);
-                            dict.remove(target);
-                        }
-                    }
-                }
-            } 
-            front = temp;
-            step ++;
+        Set<String> dict = new HashSet<>(wordList);
+        Map<String, Integer> steps = new HashMap<>();
+        steps.put(beginWord, 1);
+        dfs(dict, steps, beginWord, endWord);
+        return res;
+    }
+    void dfs(Set<String> dict, Map<String, Integer> steps, String current, String target) { 
+        if (current == target) {
+            res = Math.min(res, steps.get(current));
+            return;
         }
-        return 0;
+            
+        char[] letters = current.toCharArray();
+        for(int i = 0; i < letters.length; i ++) {
+            for (char alphabet = 'a'; alphabet <= 'z'; alphabet ++) {
+                char c = letters[i];
+                letters[i] = alphabet;
+                String word = String.valueOf(letters);
+                if (dict.contains(word)) {
+                    dict.remove(word);
+                    System.out.println(word);
+                    steps.put(word, steps.get(current) + 1);
+                    dfs(dict, steps, word, target);
+                    steps.remove(word);
+                }
+                letters[i] = c;
+            }
+        }
     }
 }
-// @lc code=end
 
+// @lc code=end
