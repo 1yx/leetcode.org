@@ -35,17 +35,28 @@ import java.util.Arrays;
 //     }
 // }
 
+// class Solution {
+//     public boolean isAnagram(String s, String t) {
+//         if (s.length() != t.length()) return false;
+//         int[] alphabet = new int[26];
+//         for (int i = 0; i < s.length(); i ++) {
+//             alphabet[s.charAt(i) - 'a'] ++;
+//             alphabet[t.charAt(i) - 'a'] --;
+//         }
+//         for(int c: alphabet) 
+//             if (c != 0) return false;
+//         return true;
+//     }
+// }
+
+// @date Mar 27 2020
 class Solution {
     public boolean isAnagram(String s, String t) {
-        if (s.length() != t.length()) return false;
-        int[] alphabet = new int[26];
-        for (int i = 0; i < s.length(); i ++) {
-            alphabet[s.charAt(i) - 'a'] ++;
-            alphabet[t.charAt(i) - 'a'] --;
-        }
-        for(int c: alphabet) 
-            if (c != 0) return false;
-        return true;
+        char[] as = s.toCharArray();
+        char[] at = t.toCharArray();
+        Arrays.sort(as);
+        Arrays.sort(at);
+        return Arrays.equals(as, at);
     }
 }
 

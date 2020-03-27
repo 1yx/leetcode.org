@@ -1,3 +1,4 @@
+
 * Disjoint-set
 ** 200.岛屿数量
 #+begin_src sh :results output :wrap source markdown
@@ -874,3 +875,10 @@ class Solution {
     }
 }
 #+end_source
+* 排序
+** 1122 数组的相对排序
+** 逆序对
+*** merge-sort
+   mutual exclusive & completely exhausive
+**** 493
+*** 树状数组
