@@ -198,7 +198,6 @@
 - https://leetcode-cn.com/problems/house-robber/
 - https://leetcode-cn.com/problems/minimum-path-sum/
 - https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock/
-- https://leetcode-cn.com/problems/climbing-stairs/
 - https://leetcode-cn.com/problems/min-cost-climbing-stairs/
 - https://leetcode-cn.com/problems/edit-distance/
 - https://leetcode-cn.com/problems/longest-increasing-subsequence/
