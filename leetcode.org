@@ -973,6 +973,8 @@ cat problems/820.*.md
 
 #+begin_src shell :results output :wrap source java
 gsed -n 's/^\/\/\s//; /\@solution trie/,/^}/{/\@solution trie/!p}' solutions/820.*.java
+#+end_src
+
 * bit
 ** 191 
 ** 231 2的幂
