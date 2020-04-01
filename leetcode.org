@@ -1,3 +1,208 @@
+* 动态规划
+** 抽象成矩形的动态规划
+*** 72.字符A变换（增删改）最少的字符到字符B
+
+*状态定义*
+
+dp[r][c]将字符A的1~r-1位变换为字符B的1~c-1位最少的步数
+
+*状态转移方程*
+
+dp[r][0] = r 将字符A第r-1位删光需要的步数
+
+dp[0][c] = c 将字符B第c-1位删光需要的步数
+
+dp[r][c] = min(dp[r-1][c-1], dp[r-1][c], dp[r][c-1]) + 1; 改、增、删 之前的最小 + 1步
+
+#+begin_src sh :results output :wrap source markdown
+cat problems/72.*.md
+#+end_src
+
+#+RESULTS:
+#+begin_source markdown
+给定两个单词 _word1_ 和 _word2_，计算出将 _word1_ 转换成 _word2_ 所使用的最少操作数 。
+
+你可以对一个单词进行如下三种操作：
+
+1.  插入一个字符
+2.  删除一个字符
+3.  替换一个字符
+
+,**示例 1:**
+
+,**输入:** word1 = "horse", word2 = "ros"
+,**输出:** 3
+,**解释:** 
+horse -> rorse (将 'h' 替换为 'r')
+rorse -> rose (删除 'r')
+rose -> ros (删除 'e')
+
+,**示例 2:**
+
+,**输入:** word1 = "intention", word2 = "execution"
+,**输出:** 5
+,**解释:** 
+intention -> inention (删除 't')
+inention -> enention (将 'i' 替换为 'e')
+enention -> exention (将 'n' 替换为 'x')
+exention -> exection (将 'n' 替换为 'c')
+exection -> execution (插入 'u') 
+[https://leetcode-cn.com/problems/edit-distance/description/]
+#+end_source
+
+#+begin_src shell :results output :wrap source java
+gsed -n 's/^\/\/\s//;/\@solution dp 1/,/^}/{/\@solution dp 1/!p}' solutions/72.*.java
+#+end_src
+
+#+RESULTS:
+#+begin_source java
+class Solution {
+    public int minDistance(String word1, String word2) {
+        int rl = word1.length(), cl = word2.length();
+        int[][] dp = new int[rl + 1][cl + 1];
+        for (int r = 0; r <= rl; r ++)
+            dp[r][0] = r;
+        for (int c = 0; c <= cl; c ++) 
+            dp[0][c] = c;
+        for (int r = 1; r <= rl; r ++) 
+            for (int c = 1; c <= cl; c ++) 
+                dp[r][c] = (word1.charAt(r - 1) == word2.charAt(c - 1)) 
+                    ? dp[r - 1][c - 1] 
+                    : Math.min(dp[r - 1][c - 1], Math.min(dp[r][c -1], dp[r - 1][c])) + 1;
+        return dp[rl][cl];
+    }    
+}
+#+end_source
+
+#+begin_src shell :results output :wrap source java
+gsed -n 's/^\/\/\s//;/\@solution dp 2/,/^}/{/\@solution dp 2/!p}' solutions/72.*.java
+#+end_src
+
+#+RESULTS:
+#+begin_source java
+class Solution {
+    public int minDistance(String word1, String word2) {
+        char[] w1 = word1.toCharArray(), w2 = word2.toCharArray();
+        int rl = w1.length, cl = w2.length;
+        int[] dp = new int[cl + 1];
+        for (int c = 0; c <= cl; c ++) 
+            dp[c] = c;
+        for (int r = 1; r <= rl; r ++) {
+            int ul = dp[0]; // upper left
+            for (int c = 0; c <= cl; c ++) {
+                if (c == 0) {
+                    dp[c] = r;
+                    continue;
+                }
+                int up = dp[c], l = dp[c - 1]; // up and left
+                dp[c] = (w1[r - 1] == w2[c - 1]) ? ul
+                    : Math.min(ul, Math.min(up, l)) + 1;
+                ul = up;
+            }
+        }
+        return dp[cl];
+    }
+}
+#+end_source
+
+
+
+** 求组合总数的动态规划
+*** 91.字母转数字后的编码能还原多少种可能性
+*状态定义*
+
+dp[i + 1] 0~i构成的字符串有多少种可能
+
+*状态转移方程*
+
+ddn<= 26:           dp[i] = dp[i - 2] + dp[i - 1]
+
+ddn> 26 || ddn< 10: dp[i] = dp[i - 1]
+
+curr == 0:          dp[i] = dp[i - 2]
+
+#+begin_src sh :results output :wrap source markdown
+cat problems/91.*.md
+#+end_src
+
+#+RESULTS:
+#+begin_source markdown
+一条包含字母 `A-Z` 的消息通过以下方式进行了编码：
+
+'A' -> 1
+'B' -> 2
+...
+'Z' -> 26
+
+给定一个只包含数字的**非空**字符串，请计算解码方法的总数。
+
+,**示例 1:**
+
+,**输入:** "12"
+,**输出:** 2
+,**解释:** 它可以解码为 "AB"（1 2）或者 "L"（12）。
+
+,**示例 2:**
+
+,**输入:** "226"
+,**输出:** 3
+,**解释:** 它可以解码为 "BZ" (2 26), "VF" (22 6), 或者 "BBF" (2 2 6) 。 
+[https://leetcode-cn.com/problems/decode-ways/description/]
+#+end_source
+
+#+begin_src shell :results output :wrap source java
+gsed -n 's/^\/\/\s//;/\@solution dp 1/,/^}/{/\@solution dp 1/!p}' solutions/91.*.java
+#+end_src
+
+#+RESULTS:
+#+begin_source java
+class Solution {
+    public int numDecodings(String s) {
+        char[] digits = s.toCharArray();
+        int len = digits.length;
+        if (digits[0] == '0') return 0;
+        int[] dp = new int[len + 1];
+        dp[0] = dp[1] = 1;
+        for (int i = 1; i < len; i ++) {
+            if (digits[i] == '0') {
+                if (digits[i - 1] != '1' && digits[i - 1] != '2') return 0;
+                dp[i + 1] = dp[i - 1];
+            } else if (digits[i - 1] == '1' || digits[i - 1] == '2' && digits[i] <= '6')
+                dp[i + 1] = dp[i] + dp[i - 1];
+            else
+                dp[i + 1] = dp[i];
+        }
+        return dp[len];
+    }
+}
+#+end_source
+
+#+begin_src shell :results output :wrap source java
+gsed -n 's/^\/\/\s//;/\@solution dp 2/,/^}/{/\@solution dp 2/!p}' solutions/91.*.java
+#+end_src
+
+#+RESULTS:
+#+begin_source java
+class Solution {
+    public int numDecodings(String s) {
+        char[] digits = s.toCharArray();
+        if (digits[0] == '0') return 0;
+        int prev = 1, curr = 1;
+        for (int i = 1; i < digits.length; i ++) {
+            int _curr = curr;
+            if (digits[i] == '0') {
+                if (digits[i - 1] != '1' && digits[i - 1] != '2') return 0;
+                curr = prev;
+            } else if (digits[i - 1] == '1' || digits[i - 1] == '2' && digits[i] <= '6')
+                curr = curr + prev;
+            prev = _curr;
+        }
+        return curr;
+    }
+}
+#+end_source
+
+
 * Disjoint-set
 ** 200.岛屿数量
 #+begin_src sh :results output :wrap source markdown
@@ -980,114 +1185,6 @@ gsed -n 's/^\/\/\s//; /\@solution trie/,/^}/{/\@solution trie/!p}' solutions/820
 
 
 
-
-* 动态规划
-** 抽象成矩形的动态规划
-**** [[https://leetcode-cn.com/problems/edit-distance/description/]]
-字符A变换（增删改）最少的字符到字符B
-
-*状态定义*
-
-dp[r][c]将字符A的1~r-1位变换为字符B的1~c-1位最少的步数
-
-*状态方程*
-
-dp[r][0] = r 将字符A第r-1位删光需要的步数
-
-dp[0][c] = c 将字符B第c-1位删光需要的步数
-
-dp[r][c] = min(dp[r-1][c-1], dp[r-1][c], dp[r][c-1]) + 1; 改、增、删 之前的最小 + 1步
-
-#+begin_src sh :results output :wrap source markdown
-cat problems/72.*.md
-#+end_src
-
-#+RESULTS:
-#+begin_source markdown
-给定两个单词 _word1_ 和 _word2_，计算出将 _word1_ 转换成 _word2_ 所使用的最少操作数 。
-
-你可以对一个单词进行如下三种操作：
-
-1.  插入一个字符
-2.  删除一个字符
-3.  替换一个字符
-
-,**示例 1:**
-
-,**输入:** word1 = "horse", word2 = "ros"
-,**输出:** 3
-,**解释:** 
-horse -> rorse (将 'h' 替换为 'r')
-rorse -> rose (删除 'r')
-rose -> ros (删除 'e')
-
-,**示例 2:**
-
-,**输入:** word1 = "intention", word2 = "execution"
-,**输出:** 5
-,**解释:** 
-intention -> inention (删除 't')
-inention -> enention (将 'i' 替换为 'e')
-enention -> exention (将 'n' 替换为 'x')
-exention -> exection (将 'n' 替换为 'c')
-exection -> execution (插入 'u') 
-[https://leetcode-cn.com/problems/edit-distance/description/]
-#+end_source
-
-#+begin_src shell :results output :wrap source java
-gsed -n 's/^\/\/\s//;/\@solution dp 1/,/^}/{/\@solution dp 1/!p}' solutions/72.*.java
-#+end_src
-
-#+RESULTS:
-#+begin_source java
-class Solution {
-    public int minDistance(String word1, String word2) {
-        int rl = word1.length(), cl = word2.length();
-        int[][] dp = new int[rl + 1][cl + 1];
-        for (int r = 0; r <= rl; r ++)
-            dp[r][0] = r;
-        for (int c = 0; c <= cl; c ++) 
-            dp[0][c] = c;
-        for (int r = 1; r <= rl; r ++) 
-            for (int c = 1; c <= cl; c ++) 
-                dp[r][c] = (word1.charAt(r - 1) == word2.charAt(c - 1)) 
-                    ? dp[r - 1][c - 1] 
-                    : Math.min(dp[r - 1][c - 1], Math.min(dp[r][c -1], dp[r - 1][c])) + 1;
-        return dp[rl][cl];
-    }    
-}
-#+end_source
-
-#+begin_src shell :results output :wrap source java
-gsed -n 's/^\/\/\s//;/\@solution dp 2/,/^}/{/\@solution dp 2/!p}' solutions/72.*.java
-#+end_src
-
-#+RESULTS:
-#+begin_source java
-class Solution {
-    public int minDistance(String word1, String word2) {
-        char[] w1 = word1.toCharArray(), w2 = word2.toCharArray();
-        int rl = w1.length, cl = w2.length;
-        int[] dp = new int[cl + 1];
-        for (int c = 0; c <= cl; c ++) 
-            dp[c] = c;
-        for (int r = 1; r <= rl; r ++) {
-            int ul = dp[0]; // upper left
-            for (int c = 0; c <= cl; c ++) {
-                if (c == 0) {
-                    dp[c] = r;
-                    continue;
-                }
-                int up = dp[c], l = dp[c - 1]; // up and left
-                dp[c] = (w1[r - 1] == w2[c - 1]) ? ul
-                    : Math.min(ul, Math.min(up, l)) + 1;
-                ul = up;
-            }
-        }
-        return dp[cl];
-    }
-}
-#+end_source
 
 * 排序
 ** algorithms
