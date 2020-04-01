@@ -4,9 +4,8 @@ import java.util.*;
  *
  * [1122] 数组的相对排序
  */
-import java.util.stream.Collector;
 
-// @lc code=start
+
 // @date Mar 27 2020
 // class Solution {
 //     public int[] relativeSortArray(int[] arr1, int[] arr2) {
@@ -42,18 +41,36 @@ import java.util.stream.Collector;
 //     }
 // }
 
+// class Solution {
+//     public int[] relativeSortArray(int[] arr1, int[] arr2) {
+//         List<Integer> lst1 = Arrays.stream(arr1).boxed().collect(Collectors.toList());
+//         List<Integer> lst2 = Arrays.stream(arr2).boxed().collect(Collectors.toList());
+//         Collections.sort(lst1, (Integer int1, Integer int2) -> {
+//             int idx1 = lst2.indexOf(int1);
+//             int idx2 = lst2.indexOf(int2);
+//             if (idx1 == -1 && idx2 == -1)
+//                 return int1 - int2;
+//             return (idx1 != -1 & idx2 != -1) ? idx1 - idx2 : idx2;
+//         });
+//         return lst1.stream().mapToInt(Integer::intValue).toArray();
+//     }
+// }
+
+// @lc code=start
+// @date Mar 28 2020
 class Solution {
     public int[] relativeSortArray(int[] arr1, int[] arr2) {
-        List<Integer> lst1 = Arrays.stream(arr1).boxed().collect(Collectors.toList());
-        List<Integer> lst2 = Arrays.stream(arr2).boxed().collect(Collectors.toList());
-        Collections.sort(lst1, (Integer int1, Integer int2) -> {
-            int idx1 = lst2.indexOf(int1);
-            int idx2 = lst2.indexOf(int2);
-            if (idx1 == -1 && idx2 == -1)
-                return int1 - int2;
-            return (idx1 != -1 & idx2 != -1) ? idx1 - idx2 : idx2;
-        });
-        return lst1.stream().mapToInt(Integer::intValue).toArray();
+        int[] bucket = new int[1001];
+        for (int i : arr1)
+            bucket[i] ++;
+        int i = 0;
+        for (int j : arr2)
+            for (; bucket[j] > 0; bucket[j] --)
+                arr1[i++] = j;
+        for (int k = 0; k < 1001; k ++)
+            for (; bucket[k] > 0; bucket[k] --)
+                arr1[i++] = k;
+        return arr1;
     }
 }
 // @lc code=end

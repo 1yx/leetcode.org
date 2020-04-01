@@ -212,6 +212,95 @@ class Solution {
 
 * BFS
 有一种替换set(queue)的方法、一种poll queue的方法
+** 1162 地图分析
+200 岛屿数量
+693 岛屿的最大面积
+#+begin_src shell :results output :wrap source java
+gsed -n '/\@solution bfs/,/^}/{/\@solution bfs/!p}' solutions/1162.*.java
+#+end_src
+
+#+RESULTS:
+#+begin_source java
+class Solution {
+    public int maxDistance(int[][] grid) {
+        Queue<Integer> queue = new LinkedList<>();
+        int rl = grid.length, cl = grid[0].length;
+        for (int r = 0; r < rl; r ++) 
+            for (int c = 0; c < cl; c ++) 
+                if (grid[r][c] == 1) {
+                    queue.offer(r);
+                    queue.offer(c);
+                }
+        if (queue.size() == 0 || queue.size() == rl * cl * 2)
+            return -1;
+        int[] dx = {1, -1, 0, 0};
+        int[] dy = {0, 0, 1, -1};
+        int _x = 0, _y = 0;
+        while (!queue.isEmpty()) {
+            _x = queue.poll();
+            _y = queue.poll();
+            for (int i = 0; i < 4; i ++){
+                int x = _x + dx[i];
+                int y = _y + dy[i];
+                if (x < 0 || y < 0 || x == rl || y == cl) continue;
+                if (grid[x][y] != 0) continue;
+                grid[x][y] = grid[_x][_y] + 1;
+                queue.offer(x);
+                queue.offer(y);
+            }
+        }
+        return grid[_x][_y] - 1;
+    }
+}
+#+end_source
+
+** 310 最小高度树
+#+begin_src sh :results output :wrap source markdown
+cat problems/127.*.md
+#+end_src
+
+#+begin_src sh :results output :wrap source java
+gsed -n '/\@solution bfs/,/^}/{/\@solution bfs/!p}' solutions/310.*.java
+#+end_src
+
+#+RESULTS:
+#+begin_source java
+class Solution {
+    public List<Integer> findMinHeightTrees(int n, int[][] edges) {
+        if (n <= 1) return Arrays.asList(0);
+        if (n == 2) return Arrays.asList(0, 1);
+        List<Integer> res = new ArrayList<>();
+        int[] indegree = new int [n];
+        List<List<Integer>> tree = new ArrayList<>();
+        for (int i = 0; i < n; i ++)
+            tree.add(new ArrayList<>());
+        for (int[] e : edges) {
+            indegree[e[0]] ++;
+            indegree[e[1]] ++;
+            tree.get(e[0]).add(e[1]);
+            tree.get(e[1]).add(e[0]);
+        }
+        Queue<Integer> queue = new LinkedList<>();
+        for (int i = 0; i < n; i ++) 
+            if (indegree[i] == 1)
+                queue.offer(i);
+        
+        while(!queue.isEmpty()) {
+            int size = queue.size();
+            res = new ArrayList<>();
+            for (int i = 0; i < size; i ++) {
+                int leaf = queue.poll();
+                res.add(leaf);
+                for (int node : tree.get(leaf)) 
+                    if (--indegree[node] == 1) 
+                        queue.offer(node);
+            }
+        }
+        return res;
+    }
+}
+#+end_source
+
 * Two-End BFS
 ** 127 单词接龙
 #+begin_src sh :results output :wrap source markdown
@@ -807,7 +896,7 @@ class Solution {
 cat problems/212.*.md
 #+end_src
 
-#+begin_src sh :results output :wrap source java
+#+begin_src shell :results output :wrap source java
 sed -n '/\@solution trie/,/^}/{/\@solution trie/!p}' solutions/212.*.java
 #+end_src
 
@@ -875,10 +964,231 @@ class Solution {
     }
 }
 #+end_source
+
+** 820 单词的压缩编码
+#+begin_src sh :results output :wrap source markdown
+cat problems/820.*.md
+#+end_src
+
+#+begin_src shell :results output :wrap source java
+gsed -n 's/^\/\/\s//; /\@solution trie/,/^}/{/\@solution trie/!p}' solutions/820.*.java
+* bit
+** 191 
+** 231 2的幂
+
+
+
+
+
+* DP
+** 股票
+
+
 * 排序
+** algorithms
+*** insertion sort
+#+begin_src shell :results output :wrap source java
+gsed -n 's/^    //; /^public void insertion(/,/^\}/p' src/sort.java
+#+end_src
+
+#+RESULTS:
+#+begin_source java
+public void insertion(int[] arr) {
+    for (int i = 0; i < arr.length; i ++) {
+        for (int j = i + 1; j > 0; j --) {
+            if (arr[j - 1] <= arr[j]) break;
+            swap(arr, j, j -1);
+        }
+    }
+}
+#+end_source
+
+*** shell sort
+#+begin_src shell :results output :wrap source java
+gsed -n 's/^    //; /^public void shell(/,/^\}/p' src/sort.java
+#+end_src
+
+#+RESULTS:
+#+begin_source java
+public void shell(int[] arr) {
+    int len = arr.length;
+    for (int gap = len / 2; gap > 0; gap /= 2) {
+        for (int i = 0; (i + gap) < len; i ++) {
+            for (int j = 0; j + gap < len; j += gap) {
+                if (arr[j] > arr[j + gap]) {
+                    int temp = arr[j];
+                    arr[j] = arr[j+ gap];
+                    arr[j+ gap] = temp;
+                }
+            }
+        }
+    }
+}
+#+end_source
+
+
+
+#+begin_src shell :results output :wrap source java
+gsed -n 's/^    //; /^public void shell2(/,/^\}/p' src/sort.java
+#+end_src
+
+#+RESULTS:
+#+begin_source java
+public void shell2(int[] arr) {
+    int len = arr.length;
+    int gap = 1;
+    while (gap < len / 3)
+        gap = gap * 3 + 1;
+
+    for (; gap > 0; gap /= 3) {
+        for (int i = gap; i < len; i ++) {
+            int temp = arr[i];
+            for (int j = i - gap; j >= 0 && arr[j] > temp; j -= gap)
+                arr[j + gap] = arr[j];
+            arr[j + gap] = temp;
+        }
+    }
+}
+#+end_source
+
+
+*** selection
+#+begin_src shell :results output :wrap source java
+gsed -n 's/^    //; /^public void selection(/,/^\}/p' src/sort.java
+#+end_src
+
+#+RESULTS:
+#+begin_source java
+public void selection(int[] arr) {
+    for (int i = 0, i < arr.length - 1; i++) {
+        int min = i;
+        for (int j = i + 1; j < arr.length; j ++) {
+            if (arr[j] < arr[min])
+                min = j;
+        }
+        if (min != i) {
+            int temp = arr[i];
+            arr[i] = arr[min];
+            arr[min] = temp;
+        }
+    }
+}
+#+end_source
+
+*** heap
+#+begin_src shell :results output :wrap source java
+gsed -n 's/^    //; /^public void heap(/,/^\}/p' src/sort.java
+gsed -n 's/^    //; /^private void heapify(/,/^\}/p' src/sort.java
+#+end_src
+
+#+RESULTS:
+#+begin_source java
+public void heap(int[] arr) {
+    for (int i = arr.length - 1; i >= 0; i --) {
+        heapify(arr, i + 1);
+        int temp = arr[0];
+        arr[0] = arr[i];
+        arr[i] = temp;
+    }
+}
+private void heapify(int [] arr, int len) {
+    if (arr.length <= 0 || arr.length < len) return;
+    for (int parent = len / 2; parent >= 0; parent --) {
+        if (parent * 2 == limit) continue;
+        int left = parent * 2;
+        int right = (left + 1) >= len ? left : left + 1;
+        int max = arr[left] > arr[right] ? left : right;
+        if (arr[max] > arr[parent]) {
+            int temp = arr[parent];
+            arr[parent] = arr[max];
+            arr[max] = temp;
+        }
+    }
+}
+#+end_source
+
+*** quick 
+#+begin_src shell :results output :wrap source java
+gsed -n 's/^    //; /^public void quick(/,/^\}/p' src/sort.java
+#+end_src
+
+#+RESULTS:
+#+begin_source java
+public void quick(int[] arr, int start, int end) {
+    if (arr.length <= 0 || start >= end) return;
+    int left = start, right = end;
+    int temp = arr[left];
+    while (left < right) {
+        while (left < right && arr[right] >= temp)
+            right --;
+        arr[left] = arr[right]; // @1
+        while (left < right && arr[left] <= temp)
+            left --;
+        arr[right] = arr[left]; // @2
+    }
+    arr[left] = temp; // @3
+    quick(arr, start, left - 1);
+    quick(arr, left + 1, end);
+}
+#+end_source
+
+*** bubble
+
 ** 1122 数组的相对排序
 ** 逆序对
 *** merge-sort
    mutual exclusive & completely exhausive
-**** 493
+
 *** 树状数组
+
+
+* 类型题
+
+** 买卖股票的最佳时机
+- 121 只买卖一次
+
+状态定义
+状态转移方程
+
+- 122 可买卖多次
+
+状态定义
+状态转移方程
+
+- 123 最多买卖两次
+
+状态定义
+buy[i][j] 表示在第0~i的区间内，第j次买的最大收益 
+sell[i][j] 表示在第0~i的区间内，第j次卖的最大收益 
+
+状态转移方程
+buy[i][j] = Math.max(buy[i - 1][j], sell[i - 1][j - 1] - prices[i]);
+sell[i][j] = Math.max(sell[i - 1][j], buy[i - 1][j] + prices[i]);
+
+- 118 最多买卖k次
+
+状态定义
+buy[i][j] 表示在第0~i的区间内，第j次买的最大收益 
+sell[i][j] 表示在第0~i的区间内，第j次卖的最大收益
+状态转移方程
+buy[i][j] = Math.max(buy[i - 1][j], sell[i - 1][j - 1] - prices[i]);
+sell[i][j] = Math.max(sell[i - 1][j], buy[i - 1][j] + prices[i]);
+
+- 309 可买卖多次但卖出后最少要隔一天才能再买入
+状态定义
+buy[i]表示在第0~i的区间内，处于购买状态的最大收益
+sell[i]表示在第0~i的区间内，处于卖出状态的最大收益
+cooll[i]表示在第0~i的区间内，处于冷冻状态的最大收益
+状态转移方程
+buy[i] = Math.max(buy[i - 1], cool[i - 1] - prices[i]);
+sell[i] = Math.max(sell[i - 1], buy[i - 1] + prices[i]);
+cool[i] = sell[i - 1];
+- 714 可买卖多次但每次买卖含手续费
+状态定义
+buy[i]表示在第0~i的区间内，处于购买状态的最大收益
+sell[i]表示在第0~i的区间内，处于卖出状态的最大收益
+状态转移方程
+buy[i] = Math.max(buy[i - 1], sell[i - 1] - prices[i] - fee);
+sell[i] = Math.max(sell[i - 1], buy[i - 1] + prices[i]);
+
+* 模板

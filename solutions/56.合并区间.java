@@ -4,7 +4,6 @@
  * [56] 合并区间
  */
 
-// @lc code=start
 // class Solution {
 //     public int[][] merge(int[][] intervals) {
 //         Arrays.sort(intervals, (i1, i2) -> {
@@ -24,6 +23,7 @@
 //     }
 // }
 
+// @lc code=start
 class Solution {
     public int[][] merge(int[][] intervals) {
         Arrays.sort(intervals, Comparator.comparingInt(a -> a[0]));
