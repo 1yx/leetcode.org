@@ -1,5 +1,3 @@
-
-
 * Disjoint-set
 ** 200.岛屿数量
 #+begin_src sh :results output :wrap source markdown
@@ -984,11 +982,13 @@ gsed -n 's/^\/\/\s//; /\@solution trie/,/^}/{/\@solution trie/!p}' solutions/820
 
 
 * 动态规划
-** 抽象成矩形
-****** 72 字符A变换最少的字符到字符B
+** 抽象成矩形的动态规划
+**** [[https://leetcode-cn.com/problems/edit-distance/description/]]
+字符A变换（增删改）最少的字符到字符B
+
 *状态定义*
 
-dp[r][c]将字符A1~r-1位变换为字符B的1~c-1位最少的步数
+dp[r][c]将字符A的1~r-1位变换为字符B的1~c-1位最少的步数
 
 *状态方程*
 
