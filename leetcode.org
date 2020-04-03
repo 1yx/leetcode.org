@@ -1,18 +1,6 @@
 * 动态规划
-** 抽象成矩形的动态规划
+** 矩形或抽象成矩形的动态规划
 *** 72.字符A变换（增删改）最少的字符到字符B
-
-*状态定义*
-
-dp[r][c]将字符A的1~r-1位变换为字符B的1~c-1位最少的步数
-
-*状态转移方程*
-
-dp[r][0] = r 将字符A第r-1位删光需要的步数
-
-dp[0][c] = c 将字符B第c-1位删光需要的步数
-
-dp[r][c] = min(dp[r-1][c-1], dp[r-1][c], dp[r][c-1]) + 1; 改、增、删 之前的最小 + 1步
 
 #+begin_src sh :results output :wrap source markdown
 cat problems/72.*.md
@@ -50,6 +38,20 @@ exection -> execution (插入 'u')
 [https://leetcode-cn.com/problems/edit-distance/description/]
 #+end_source
 
+**** 解法 1 
+
+*状态定义*
+
+dp[r][c]将字符A的1~r-1位变换为字符B的1~c-1位最少的步数
+
+*状态转移方程*
+
+dp[r][0] = r 将字符A第r-1位删光需要的步数
+
+dp[0][c] = c 将字符B第c-1位删光需要的步数
+
+dp[r][c] = min(dp[r-1][c-1], dp[r-1][c], dp[r][c-1]) + 1; 改、增、删 之前的最小 + 1步
+
 #+begin_src shell :results output :wrap source java
 gsed -n 's/^\/\/\s//;/\@solution dp 1/,/^}/{/\@solution dp 1/!p}' solutions/72.*.java
 #+end_src
@@ -73,6 +75,10 @@ class Solution {
     }    
 }
 #+end_source
+
+**** 解法 2
+
+压缩解法 1 的dp数组
 
 #+begin_src shell :results output :wrap source java
 gsed -n 's/^\/\/\s//;/\@solution dp 2/,/^}/{/\@solution dp 2/!p}' solutions/72.*.java
@@ -106,20 +112,163 @@ class Solution {
 #+end_source
 
 
+*** 85 二维数组中的最大矩形
 
-** 求组合总数的动态规划
-*** 91.字母转数字后的编码能还原多少种可能性
+#+begin_src sh :results output :wrap source markdown
+cat problems/85.*.md
+#+end_src
+
+**** 解法 1
 *状态定义*
 
-dp[i + 1] 0~i构成的字符串有多少种可能
+dp[r][c] c之前连续为1的长度
 
 *状态转移方程*
 
-ddn<= 26:           dp[i] = dp[i - 2] + dp[i - 1]
+dp[r][c] = matrix[r][c] == 0 ? 0 : dp[r][c - 1] + 1;
 
-ddn> 26 || ddn< 10: dp[i] = dp[i - 1]
+#+begin_src shell :results output :wrap source java
+gsed -n 's/^\/\/\s//;/\@solution dp 1/,/^}/{/\@solution dp 1/!p}' solutions/85.*.java
+#+end_src
 
-curr == 0:          dp[i] = dp[i - 2]
+#+RESULTS:
+#+begin_source java
+class Solution {
+    public int maximalRectangle(char[][] matrix) { 
+        if (matrix.length == 0) return 0;
+        int rl = matrix.length, cl = matrix[0].length;
+        int[][] dp = new int[rl][cl];
+        int res = 0;
+        for (int r = 0; r < rl; r ++) {
+            for (int c = 0; c < cl; c ++) {        
+                if (matrix[r][c] == '0') continue;
+                dp[r][c] = (c == 0) ? 1 : dp[r][c - 1] + 1;
+                int left = dp[r][c];
+                for (int _r = r; _r >= 0; _r --) {
+                    left = Math.min(left, dp[_r][c]);
+                    res = Math.max(res, left * (r - _r + 1));
+                }
+            }
+        }
+        return res;
+    }
+}
+#+end_source
+
+**** 解法 2
+
+*状态定义*
+
+left[r][c]  matrix[r][c] 上方长方形的左边界
+
+right[r][c] matrix[r][c] 上方长方形的右边界
+
+up[r][c] matrix[r][c] 上方长方形的高
+
+*状态转移方程*
+
+if (matrix[r][c] == 1 )
+
+left[r][c] = min(left[r - 1][c], 当前行的左边界)
+
+right[r][c] = min(right[r - 1][c], 当前行的右边界)
+
+up[r][c] = up[r - 1][c] + 1
+
+if (matrix[r][c] == 0)
+
+left[r][c] = 0
+
+right[r][c] = cl - 1
+
+up[r][c] = 0
+
+#+begin_src shell :results output :wrap source java
+gsed -n 's/^\/\/\s//;/\@solution dp 2/,/^}/{/\@solution dp 2/!p}' solutions/85.*.java
+#+end_src
+
+#+RESULTS:
+#+begin_source java
+class Solution {
+    public int maximalRectangle(char[][] matrix) {
+        if(matrix.length == 0) return 0;
+        int rl = matrix.length, cl = matrix[0].length;
+        int[][] left = new int[rl][cl], right = new int[rl][cl], up = new int[rl][cl];
+        int res = 0;
+        for (int r = 0; r < rl; r ++) {
+            int leftBorder = 0, rightBorder = cl - 1;
+            for (int c = 0; c < cl; c ++) {
+                if (matrix[r][c] == '1') {
+                    up[r][c] = r > 0 ? up[r - 1][c] + 1: 1;
+                    left[r][c] = r > 0 ? Math.max(left[r - 1][c], leftBorder) : leftBorder;
+                } else {
+                    up[r][c] = 0;
+                    left[r][c] = 0;
+                    leftBorder = c + 1;
+                }
+                int _c = cl - 1 - c;
+                if (matrix[r][_c] == '1') {
+                    right[r][_c] = r > 0 ? Math.min(right[r - 1][_c], rightBorder) : rightBorder;
+                } else {
+                    right[r][_c] = cl - 1;
+                    rightBorder = _c - 1;
+                }
+            }
+            for (int c = 0; c < cl; c ++) {
+                res = Math.max(res, (right[r][c] - left[r][c] + 1) * up[r][c]);
+            }
+        }
+        return res;
+    }
+}
+#+end_source
+
+**** 解法 3
+压缩解法 2 的dp数组
+
+#+begin_src shell :results output :wrap source java
+gsed -n 's/^\/\/\s//;/\@solution dp 3/,/^}/{/\@solution dp 3/!p}' solutions/85.*.java
+#+end_src
+
+#+RESULTS:
+#+begin_source java
+class Solution {
+    public int maximalRectangle(char[][] matrix) {
+        if (matrix.length == 0) return 0;
+        int rl = matrix.length, cl = matrix[0].length;
+        int[] left = new int[cl], right = new int[cl], up = new int[cl];
+        Arrays.fill(right, cl - 1);
+        int res = 0;
+        for (int r = 0; r < rl; r ++) {
+            int leftBorder = 0, rightBorder = cl - 1;
+            for (int c = 0; c < cl; c ++) {
+                if (matrix[r][c] == '1') {
+                    up[c] = up[c] + 1;
+                    left[c] = Math.max(left[c], leftBorder);
+                } else {
+                    up[c] = 0;
+                    left[c] = 0;
+                    leftBorder = c + 1;
+                }
+                int _c = cl - 1 - c;
+                if (matrix[r][_c] == '1') {
+                    right[_c] = Math.min(right[_c], rightBorder);
+                } else {
+                    right[_c] = cl - 1;
+                    rightBorder = _c - 1;
+                }
+            }
+            for (int c = 0; c < cl; c ++) {
+                res = Math.max(res, (right[c] - left[c] + 1) * up[c]);
+            }
+        }
+        return res;
+    }
+}
+#+end_source
+
+** 求组合总数的动态规划
+*** 91.字母转数字后的编码能还原多少种可能性
 
 #+begin_src sh :results output :wrap source markdown
 cat problems/91.*.md
@@ -150,6 +299,21 @@ cat problems/91.*.md
 [https://leetcode-cn.com/problems/decode-ways/description/]
 #+end_source
 
+**** 解法 1
+
+*状态定义*
+
+dp[i] 0~i-1构成的字符串有多少种可能
+
+*状态转移方程*
+
+ddn<= 26:           dp[i] = dp[i - 2] + dp[i - 1]
+
+ddn> 26 || ddn< 10: dp[i] = dp[i - 1]
+
+curr == 0:          dp[i] = dp[i - 2]
+
+
 #+begin_src shell :results output :wrap source java
 gsed -n 's/^\/\/\s//;/\@solution dp 1/,/^}/{/\@solution dp 1/!p}' solutions/91.*.java
 #+end_src
@@ -177,6 +341,10 @@ class Solution {
 }
 #+end_source
 
+**** 解法 2 
+
+压缩解法 1 的数组
+
 #+begin_src shell :results output :wrap source java
 gsed -n 's/^\/\/\s//;/\@solution dp 2/,/^}/{/\@solution dp 2/!p}' solutions/91.*.java
 #+end_src
@@ -202,6 +370,123 @@ class Solution {
 }
 #+end_source
 
+** 最长子序列相关的动态规划
+
+*** 300 最长上升子序列的长度
+
+#+begin_src sh :results output :wrap source markdown
+cat problems/300.*.md
+#+end_src
+
+**** 解法
+
+*状态定义*
+
+dp[i] 0~i个数字的最长子序列长度
+
+*状态转移方程*
+
+dp[i] = max(dp[i], dp[j] + 1) for j in [0, i)
+
+#+begin_src shell :results output :wrap source java
+gsed -n 's/^\/\/\s//;/\@solution dp/,/^}/{/\@solution dp/!p}' solutions/300.*.java
+#+end_src
+
+#+RESULTS:
+#+begin_source java
+class Solution {
+    public int lengthOfLIS(int[] nums) {
+        int len = nums.length;
+        if (len < 2) return len;
+        int[] dp = new int[len];
+        Arrays.fill(dp, 1);
+        int res = 0;
+        for (int i = 0; i < len; i ++) {
+            for (int j = 0; j < i; j ++) 
+                if (nums[j] < nums[i]) 
+                    dp[i] = Math.max(dp[i], dp[j] + 1);
+            res = Math.max(res, dp[i]);
+        }
+        return res;
+    }
+}
+#+end_source
+
+*** 32 最长有效括号
+
+#+begin_src sh :results output :wrap source markdown
+cat problems/32.*.md
+#+end_src
+
+#+RESULTS:
+#+begin_source markdown
+给定一个只包含 `'('` 和 `')'` 的字符串，找出最长的包含有效括号的子串的长度。
+
+,**示例 1:**
+
+,**输入:** "(()"
+,**输出:** 2
+,**解释:** 最长有效括号子串为 `"()"`
+
+,**示例 2:**
+
+,**输入:** "`)()())`"
+,**输出:** 4
+,**解释:** 最长有效括号子串为 `"()()"` 
+[https://leetcode-cn.com/problems/longest-valid-parentheses/description/]
+#+end_source
+
+**** 解法
+
+*状态定义*
+
+dp[i] 0~i之间的最长有效括号
+
+*状态转移方程*
+
+#+begin_example
+s  ) ) ( ( ( ) ( ) ) ) (  )  )
+i  0 1 2 3 4 5 6 7 8 9 10 11 12
+dp 0 0 0 0 0 2 0 4 6 8 0  10 0
+dp[i] == ')' 时才计算有效括号
+prev = i - 1;
+if (prev == '(') dp[i] = dp[prev-1] + 2; 对应dp[7] = dp[5] + 2
+open = i - dp[prev] - 1;
+if (prev == ')' && open == '(') dp[i] = dp[open-1] + dp[prev] + 2; 对应dp[8] = dp[3] + dp[7] + 2
+#+end_example
+
+
+#+begin_src shell :results output :wrap source java
+gsed -n 's/^\/\/\s//;/\@solution dp/,/^}/{/\@solution dp/!p}' solutions/32.*.java
+#+end_src
+
+#+RESULTS:
+#+begin_source java
+class Solution {
+    public int longestValidParentheses(String s) {
+        int len = s.length(), res = 0;
+        char[] parenthese = new char[len + 2];
+        parenthese[0] = parenthese[1] = ')';
+        System.arraycopy(s.toCharArray(), 0, parenthese, 2, len);
+        int[] dp = new int[len + 2];
+        for (int i = 2; i < len + 2; i ++) {
+            if (parenthese[i] == '(') continue;
+            int prev = i - 1, open = i - dp[prev] - 1;
+            if (parenthese[prev] == '(')
+                dp[i] = dp[prev - 1] + 2;
+            else if (parenthese[open] == '(')
+                dp[i] = dp[open - 1] + dp[prev] + 2;
+            res = Math.max(res, dp[i]);
+        }
+        return res;
+    }
+}
+#+end_source
+
+
+* 分治
+** 二分法
+*** 
 
 * Disjoint-set
 ** 200.岛屿数量
@@ -1419,6 +1704,10 @@ buy[i] = Math.max(buy[i - 1], sell[i - 1] - prices[i] - fee);
 
 sell[i] = Math.max(sell[i - 1], buy[i - 1] + prices[i]);
 
+** 最大矩形
+单调递增栈
+*** 84 柱状图 
+*** 85 二维数组
 * 模板
 ** 递归
    #+begin_src java
@@ -1467,3 +1756,4 @@ sell[i] = Math.max(sell[i - 1], buy[i - 1] + prices[i]);
        return dp[n - 1][n - 1];
    }
    #+end_src
+
