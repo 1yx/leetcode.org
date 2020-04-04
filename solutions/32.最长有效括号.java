@@ -53,33 +53,53 @@
 //     }
 // }
 
-
-
-// @lc code=start
 // @date Apr 1 2020
 // s  ) ) ( ( ( ) ( ) ) ) (  )  )
 // i  0 1 2 3 4 5 6 7 8 9 10 11 12
 // dp 0 0 0 0 0 2 0 4 6 8 0  10 0
 // @solution dp
+// class Solution {
+//     public int longestValidParentheses(String s) {
+//         int len = s.length(), res = 0;
+//         char[] parenthese = new char[len + 2];
+//         parenthese[0] = parenthese[1] = ')';
+//         System.arraycopy(s.toCharArray(), 0, parenthese, 2, len);
+//         int[] dp = new int[len + 2];
+//         for (int i = 2; i < len + 2; i ++) {
+//             if (parenthese[i] == '(') continue;
+//             int prev = i - 1, open = i - dp[prev] - 1;
+//             if (parenthese[prev] == '(')
+//                 dp[i] = dp[prev - 1] + 2;
+//             else if (parenthese[open] == '(')
+//                 dp[i] = dp[open - 1] + dp[prev] + 2;
+//             res = Math.max(res, dp[i]);
+//         }
+//         return res;
+//     }
+// }
+
+// @lc code=start
+// @date Apr 4 2020
+// @solution stack
 class Solution {
     public int longestValidParentheses(String s) {
-        int len = s.length(), res = 0;
-        char[] parenthese = new char[len + 2];
-        parenthese[0] = parenthese[1] = ')';
-        System.arraycopy(s.toCharArray(), 0, parenthese, 2, len);
-        int[] dp = new int[len + 2];
-        for (int i = 2; i < len + 2; i ++) {
-            if (parenthese[i] == '(') continue;
-            int prev = i - 1, open = i - dp[prev] - 1;
-            if (parenthese[prev] == '(')
-                dp[i] = dp[prev - 1] + 2;
-            else if (parenthese[open] == '(')
-                dp[i] = dp[open - 1] + dp[prev] + 2;
-            res = Math.max(res, dp[i]);
+        Stack<Integer> stack = new Stack<>();
+        stack.push(-1);
+        int res = 0, i = 0;
+        for (char c : s.toCharArray()) {
+            if (c == '(') {
+                stack.push(i);
+            } else {
+                stack.pop();
+                if (stack.empty()) 
+                    stack.push(i);
+                else
+                    res = Math.max(res, i - stack.peek());
+            }
+            i ++;
         }
         return res;
     }
 }
-
 // @lc code=end
 

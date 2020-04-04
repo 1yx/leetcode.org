@@ -625,6 +625,326 @@ class Solution {
 }
 #+end_source
 
+** other
+*** 42 接雨水
+
+#+begin_src sh :results output :wrap source markdown
+cat problems/42.*.md
+#+end_src
+
+#+RESULTS:
+#+begin_source markdown
+给定 _n_ 个非负整数表示每个宽度为 1 的柱子的高度图，计算按此排列的柱子，下雨之后能接多少雨水。
+
+![](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2018/10/22/rainwatertrap.png)
+
+上面是由数组 \[0,1,0,2,1,0,1,3,2,1,2,1\] 表示的高度图，在这种情况下，可以接 6 个单位的雨水（蓝色部分表示雨水）。 **感谢 Marcos** 贡献此图。
+
+,**示例:**
+
+,**输入:** \[0,1,0,2,1,0,1,3,2,1,2,1\]
+,**输出:** 6 
+[https://leetcode-cn.com/problems/trapping-rain-water/description/]
+#+end_source
+
+**** 解法
+*状态定义*
+left[i] 位置i左侧最高
+right[i] 位置i右侧最高
+
+*状态转移方程*
+left[i] = Math.max(height[i], left[i - 1])
+right[i] = Math.max(height[i], right[i + 1])
+res += Math.min(left[i], right[i]) - height[i];
+
+#+begin_src shell :results output :wrap source java
+gsed -n 's/^\/\/\s//;/\@solution dp/,/^}/{/\@solution dp/!p}' solutions/42.*.java
+#+end_src
+
+#+RESULTS:
+#+begin_source java
+class Solution {
+    public int trap(int[] height) {
+        int res = 0, len = height.length;
+        if (len == 0) return 0;
+        int[] left = new int[len],  right = new int[len];
+        left[0] = height[0];
+        right[len - 1] = height[len - 1];
+        for (int i = 1; i < len; i ++) 
+            left[i] = Math.max(left[i - 1], height[i]);
+        for (int i = len - 2; i >= 0; i --) 
+            right[i] = Math.max(right[i + 1], height[i]);
+        for (int i = 0; i < len; i ++) 
+            res += Math.min(left[i], right[i]) - height[i];
+        return res;
+    }
+}
+#+end_source
+
+
+* 利用栈
+** 括号匹配
+*** 20 有效的括号
+#+begin_src sh :results output :wrap source markdown
+cat problems/20.*.md
+#+end_src
+
+#+RESULTS:
+#+begin_source markdown
+给定一个只包括 `'('`，`')'`，`'{'`，`'}'`，`'['`，`']'` 的字符串，判断字符串是否有效。
+
+有效字符串需满足：
+
+1.  左括号必须用相同类型的右括号闭合。
+2.  左括号必须以正确的顺序闭合。
+
+注意空字符串可被认为是有效字符串。
+
+,**示例 1:**
+
+,**输入:** "()"
+,**输出:** true
+
+,**示例 2:**
+
+,**输入:** "()\[\]{}"
+,**输出:** true
+
+,**示例 3:**
+
+,**输入:** "(\]"
+,**输出:** false
+
+,**示例 4:**
+
+,**输入:** "(\[)\]"
+,**输出:** false
+
+,**示例 5:**
+
+,**输入:** "{\[\]}"
+,**输出:** true 
+[https://leetcode-cn.com/problems/valid-parentheses/description/]
+#+end_source
+
+**** 解法
+#+begin_src shell :results output :wrap source java
+gsed -n 's/^\/\/\s//;/\@solution stack/,/^}/{/\@solution stack/!p}' solutions/20.*.java
+#+end_src
+
+#+RESULTS:
+#+begin_source java
+class Solution {
+    public boolean isValid(String s) {
+        Map<Character, Character> map = new HashMap<Character, Character>(){{
+            put('(', ')');
+            put('[', ']');
+            put('{', '}');
+        }};
+        Stack<Character> stack = new Stack<>();
+        for (Character c : s.toCharArray()) {
+            if (map.containsKey(c))
+                stack.push(c);
+            else if (stack.empty() || map.get(stack.pop()) != c)
+                return false;
+        }
+        return stack.empty();
+    }
+}
+#+end_source
+
+*** 32 最长的有效括号
+#+begin_src sh :results output :wrap source markdown
+cat problems/32.*.md
+#+end_src
+
+**** 解法
+#+begin_src shell :results output :wrap source java
+gsed -n 's/^\/\/\s//;/\@solution stack/,/^}/{/\@solution stack/!p}' solutions/32.*.java
+#+end_src
+
+#+RESULTS:
+#+begin_source java
+class Solution {
+    public int longestValidParentheses(String s) {
+        Stack<Integer> stack = new Stack<>();
+        stack.push(-1);
+        int res = 0, i = 0;
+        for (char c : s.toCharArray()) {
+            if (c == '(') {
+                stack.push(i);
+            } else {
+                stack.pop();
+                if (stack.empty()) 
+                    stack.push(i);
+                else
+                    res = Math.max(res, i - stack.peek());
+            }
+            i ++;
+        }
+        return res;
+    }
+}
+#+end_source
+
+*** 1111 有效括号的嵌套深度
+#+begin_src sh :results output :wrap source markdown
+cat problems/1111.*.md
+#+end_src
+
+**** 解法 1
+#+begin_src shell :results output :wrap source java
+gsed -n 's/^\/\/\s//;/\@solution stack 1/,/^}/{/\@solution stack 1/!p}' solutions/1111.*.java
+#+end_src
+
+#+RESULTS:
+#+begin_source java
+class Solution {
+    public int[] maxDepthAfterSplit(String seq) {
+        int[] res = new int[seq.length()];
+        Stack<Integer> stack = new Stack<>();
+        int i = 0;
+        for (char c : seq.toCharArray()) {
+            if (c == '(') {
+                stack.push(i);
+                res[i++] = stack.size() & 1;
+            } else if (c == ')') {
+                res[i++] = stack.size() & 1;
+                stack.pop();
+            }
+        }
+        return res;
+    }
+}
+#+end_source
+
+**** 解法 2 
+并不需要实际的stack，只需要变量depth模似stack.depth()就好了。
+#+begin_src shell :results output :wrap source java
+gsed -n 's/^\/\/\s//;/\@solution stack 2/,/^}/{/\@solution stack 2/!p}' solutions/1111.*.java
+#+end_src
+
+#+RESULTS:
+#+begin_source java
+class Solution {
+    public int[] maxDepthAfterSplit(String seq) {
+        int[] res = new int[seq.length()];
+        int depth = 0, i = 0;
+        for (char c : seq.toCharArray()) {
+            if (c == '(') {
+                depth ++;
+                res[i ++] = depth & 1;
+            } else if (c == ')') {
+                res[i ++] = depth & 1;                
+                depth --;
+            }
+        }
+        return res;
+    }
+}
+#+end_source
+
+** 单调递增栈
+*** 42 柱状图里接雨水
+#+begin_src sh :results output :wrap source markdown
+cat problems/42.*.md
+#+end_src
+
+#+RESULTS:
+#+begin_source markdown
+给定 _n_ 个非负整数表示每个宽度为 1 的柱子的高度图，计算按此排列的柱子，下雨之后能接多少雨水。
+
+![](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2018/10/22/rainwatertrap.png)
+
+上面是由数组 \[0,1,0,2,1,0,1,3,2,1,2,1\] 表示的高度图，在这种情况下，可以接 6 个单位的雨水（蓝色部分表示雨水）。 **感谢 Marcos** 贡献此图。
+
+,**示例:**
+
+,**输入:** \[0,1,0,2,1,0,1,3,2,1,2,1\]
+,**输出:** 6 
+[https://leetcode-cn.com/problems/trapping-rain-water/description/]
+#+end_source
+
+**** 解法
+#+begin_src shell :results output :wrap source java
+gsed -n 's/^\/\/\s//;/\@solution stack/,/^}/{/\@solution stack/!p}' solutions/42.*.java
+#+end_src
+
+#+RESULTS:
+#+begin_source java
+class Solution {
+    public int trap(int[] height) {
+        if (height.length == 0) return 0;
+        Stack<Integer> stack = new Stack<>();
+        int res = 0;
+        for (int i = 0; i < height.length; i ++) {
+            while (!stack.empty() && height[i] > height[stack.peek()]) {
+                int concave = height[stack.pop()];
+                if (stack.empty()) break;
+                int dist = i - stack.peek() - 1;
+                int subPeak = Math.min(height[stack.peek()], height[i]);
+                res += (subPeak - concave) * dist;
+            }
+            stack.push(i);
+        }
+        return res;
+    }
+}
+#+end_source
+
+*** 84 柱状图的最大矩形
+#+begin_src sh :results output :wrap source markdown
+cat problems/84.*.md
+#+end_src
+
+#+RESULTS:
+#+begin_source markdown
+给定 _n_ 个非负整数，用来表示柱状图中各个柱子的高度。每个柱子彼此相邻，且宽度为 1 。
+
+求在该柱状图中，能够勾勒出来的矩形的最大面积。
+
+![](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2018/10/12/histogram.png)
+
+以上是柱状图的示例，其中每个柱子的宽度为 1，给定的高度为 `[2,1,5,6,2,3]`。
+
+![](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2018/10/12/histogram_area.png)
+
+图中阴影部分为所能勾勒出的最大矩形面积，其面积为 `10` 个单位。
+
+,**示例:**
+
+,**输入:** \[2,1,5,6,2,3\]
+,**输出:** 10 
+[https://leetcode-cn.com/problems/largest-rectangle-in-histogram/description/]
+#+end_source
+
+**** 解法
+#+begin_src shell :results output :wrap source java
+gsed -n 's/^\/\/\s//;/\@solution stack 1/,/^}/{/\@solution stack 1/!p}' solutions/84.*.java
+#+end_src
+
+#+RESULTS:
+#+begin_source java
+class Solution {
+    public int largestRectangleArea(int[] heights) {
+        Stack<Integer> stack = new Stack<>();
+        stack.push(-1);
+        int maxArea = 0;
+        for (int i = 0; i < heights.length; i ++) {
+            while (stack.peek() != -1 && heights[i] <= heights[stack.peek()]) 
+                maxArea = Math.max(maxArea, heights[stack.pop()] * (i - stack.peek() - 1));
+            
+            stack.push(i);
+        }
+
+        while (stack.peek() != -1) {
+            maxArea = Math.max(maxArea, heights[stack.pop()] * (heights.length - stack.peek() - 1));
+        }
+        return maxArea;
+    }
+}
+#+end_source
+
 * 分治
 ** 二分法
 *** 

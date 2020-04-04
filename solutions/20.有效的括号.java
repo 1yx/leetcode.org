@@ -5,7 +5,6 @@ import java.util.*;
  * [20] 有效的括号
  */
 
-// @lc code=start
 // class Solution {
 //     public boolean isValid(String s) {
 //         if (s.isEmpty())
@@ -28,7 +27,6 @@ import java.util.*;
 //     }
 // }
 
-// 栈
 // @date Mar 03 2020
 // class Solution {
 //     public boolean isValid(String s) {
@@ -48,7 +46,9 @@ import java.util.*;
 //     }
 // }
 
+// @lc code=start
 // @date Mar 03 2020
+// @solution stack
 class Solution {
     public boolean isValid(String s) {
         Map<Character, Character> map = new HashMap<Character, Character>(){{
@@ -66,17 +66,4 @@ class Solution {
         return stack.empty();
     }
 }
-
 // @lc code=end
-
-class Solution {
-    public void merge(int[] A, int m, int[] B, int n) {
-        int p = m-- + n -- - 1;
-        while (m > 0 && n > 0) 
-            A[p] = A[m] > B[n] ? A[m--] : B[n--];
-        
-        if (n > 0) 
-            System.arraycopy(B, 0, A, 0, n - 1);
-        
-    }
-}

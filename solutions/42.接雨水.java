@@ -5,7 +5,6 @@ import java.util.*;
  * [42] 接雨水
  */
 
-// @lc code=start
 // class Solution {
 //     public int trap(final int[] height) {
 //         if (height.length < 2) return 0;
@@ -27,27 +26,27 @@ import java.util.*;
 // }
 
 // @date Mar 04 2020
-class Solution {
-    public int trap(int [] height) {
-        if (height == null || height.length < 3) return 0;
-        Stack<Integer> st = new Stack<Integer>();
-        int right = 0, res = 0;
-        while (right < height.length) {
-            if (st.isEmpty() || height[right] <= height[st.peek()]) {
-                st.push(right++);
-            } else {
-                int concave = height[st.pop()];
-                if (!st.empty()) {
-                    int left = st.peek();
-                    int subPeak = Math.min(height[left], height[right]);
-                    int dist = right - left - 1;
-                    res += (subPeak - concave) * dist;
-                }
-            }
-        }
-        return res;
-    }
-}
+// class Solution {
+//     public int trap(int [] height) {
+//         if (height == null || height.length < 3) return 0;
+//         Stack<Integer> st = new Stack<Integer>();
+//         int right = 0, res = 0;
+//         while (right < height.length) {
+//             if (st.isEmpty() || height[right] <= height[st.peek()]) {
+//                 st.push(right++);
+//             } else {
+//                 int concave = height[st.pop()];
+//                 if (!st.empty()) {
+//                     int left = st.peek();
+//                     int subPeak = Math.min(height[left], height[right]);
+//                     int dist = right - left - 1;
+//                     res += (subPeak - concave) * dist;
+//                 }
+//             }
+//         }
+//         return res;
+//     }
+// }
 
 // 迭代计算每列左右最大
 // 累加min(height[left], height[right]) - height[curr]
@@ -203,3 +202,47 @@ class Solution {
 //         return res;
 //     }
 // }
+
+
+// @date Apr 4 2020
+// @solution stack
+// class Solution {
+//     public int trap(int[] height) {
+//         if (height.length == 0) return 0;
+//         Stack<Integer> stack = new Stack<>();
+//         int res = 0;
+//         for (int i = 0; i < height.length; i ++) {
+//             while (!stack.empty() && height[i] > height[stack.peek()]) {
+//                 int concave = height[stack.pop()];
+//                 if (stack.empty()) break;
+//                 int dist = i - stack.peek() - 1;
+//                 int subPeak = Math.min(height[stack.peek()], height[i]);
+//                 res += (subPeak - concave) * dist;
+//             }
+//             stack.push(i);
+//         }
+//         return res;
+//     }
+// }
+
+// @lc code=start
+// @date Apr 4 2020
+// @solution dp
+class Solution {
+    public int trap(int[] height) {
+        int res = 0, len = height.length;
+        if (len == 0) return 0;
+        int[] left = new int[len],  right = new int[len];
+        left[0] = height[0];
+        right[len - 1] = height[len - 1];
+        for (int i = 1; i < len; i ++) 
+            left[i] = Math.max(left[i - 1], height[i]);
+        for (int i = len - 2; i >= 0; i --) 
+            right[i] = Math.max(right[i + 1], height[i]);
+        for (int i = 0; i < len; i ++) 
+            res += Math.min(left[i], right[i]) - height[i];
+        return res;
+    }
+}
+// @lc code=end
+
