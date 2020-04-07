@@ -349,6 +349,9 @@ class Solution {
 }
 #+end_source
 
+
+*** TODO 44
+
 ** 求组合总数的动态规划
 *** 91.字母转数字后的编码能还原多少种可能性
 
@@ -681,6 +684,7 @@ class Solution {
 }
 #+end_source
 
+*** TODO 5
 
 * 利用栈
 ** 括号匹配
@@ -944,6 +948,14 @@ class Solution {
     }
 }
 #+end_source
+
+* TODO 利用双端队列
+*** 151
+* TODO 滑动窗口
+https://leetcode-cn.com/problems/find-all-anagrams-in-a-string/solution/hua-dong-chuang-kou-tong-yong-si-xiang-jie-jue-zi-/
+*** 76 
+*** 438
+*** 3
 
 * 分治
 ** 二分法
@@ -1924,6 +1936,7 @@ cat problems/820.*.md
 gsed -n 's/^\/\/\s//; /\@solution trie/,/^}/{/\@solution trie/!p}' solutions/820.*.java
 #+end_src
 
+** TODO 14
 * bit
 ** TODO 191 
 ** TODO 231 2的幂
@@ -2175,7 +2188,7 @@ buy[i][j] = Math.max(buy[i - 1][j], sell[i - 1][j - 1] - prices[i]);
 
 sell[i][j] = Math.max(sell[i - 1][j], buy[i - 1][j] + prices[i]);
 
-- 118 最多买卖k次
+- 188 最多买卖k次
 
 *状态定义*
 
@@ -2273,4 +2286,5 @@ sell[i] = Math.max(sell[i - 1], buy[i - 1] + prices[i]);
        return dp[n - 1][n - 1];
    }
    #+end_src
+
 
