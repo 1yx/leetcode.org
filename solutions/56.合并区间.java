@@ -1,3 +1,5 @@
+import java.util.*;
+
 /*
  * @lc app=leetcode.cn id=56 lang=java
  *
@@ -23,18 +25,34 @@
 //     }
 // }
 
+
+// class Solution {
+//     public int[][] merge(int[][] intervals) {
+//         Arrays.sort(intervals, Comparator.comparingInt(a -> a[0]));
+//         ArrayList<int[]> ints = new ArrayList<>();
+//         for (int i = 0; i < intervals.length; i++) {
+//             int min = intervals[i][0], max=intervals[i][1];
+//             while (i < intervals.length - 1 && max >= intervals[i + 1][0] )
+//                 max = Math.max(max, intervals[++ i][1]);
+//             ints.add(new int[]{min, max});
+//         }
+//         return ints.toArray(new int[ints.size()][2]);
+//     }
+// }
+
 // @lc code=start
+// @date Apr 16 2020
 class Solution {
     public int[][] merge(int[][] intervals) {
         Arrays.sort(intervals, Comparator.comparingInt(a -> a[0]));
-        ArrayList<int[]> ints = new ArrayList<>();
-        for (int i = 0; i < intervals.length; i++) {
-            int min = intervals[i][0], max=intervals[i][1];
-            while (i < intervals.length - 1 && max >= intervals[i + 1][0] )
-                max = Math.max(max, intervals[++ i][1]);
-            ints.add(new int[]{min, max});
+        ArrayList<int[]> res = new ArrayList<>();
+        for (int i = 0; i < intervals.length; i ++) {
+            int head = intervals[i][0], tail = intervals[i][1];
+            while (i < intervals.length - 1 && tail >= intervals[i + 1][0]) 
+                tail = Math.max(tail, intervals[++i][1]);
+            res.add(new int[]{head, tail});
         }
-        return ints.toArray(new int[ints.size()][2]);
+        return res.toArray(new int[res.size()][2]);
     }
 }
 // @lc code=end

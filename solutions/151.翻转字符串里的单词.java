@@ -15,7 +15,7 @@ import java.util.*;
 //     }
 // }
 
-// @lc code=start
+
 // @date Apr 5 2020
 // @solution deque
 class Solution {
@@ -33,6 +33,27 @@ class Solution {
             } else if (c != ' ')
                 word.append(c);
             l ++;
+        }
+        deque.offerFirst(word.toString());
+        return String.join(" ", deque);
+    }
+}
+
+// @lc code=start
+class Solution {
+    public String reverseWords(String s) {
+        int l = 0, r = s.length() - 1;
+        for (; l <= r && s.charAt(l) == ' '; l ++);
+        for (; l <= r && s.charAt(r) == ' '; r -- );
+        Deque<String> deque = new ArrayDeque<>();
+        StringBuilder word = new StringBuilder();
+        for (; l <= r; l ++) {
+            char c = s.charAt(l);
+            if (word.length() != 0 && c == ' ') {
+                deque.offerFirst(word.toString());
+                word.setLength(0);
+            } else if (c != ' ')
+                word.append(c);
         }
         deque.offerFirst(word.toString());
         return String.join(" ", deque);

@@ -81,9 +81,29 @@ import java.util.*;
 //     }
 // }
 
-// @lc code=start
+
 // @date Mar 22 2020
 // @solution backtracking
+// class Solution {
+//     List<String> res = new ArrayList<>();
+//     public List<String> generateParenthesis(int n) {
+//         dfs(n, "", 0, 0);
+//         return res;
+//     }
+//     void dfs(int n, String str, int l, int r) {
+//         if (l == n && r == n) {
+//             res.add(str);
+//             return;
+//         }
+//         if (l < n)
+//             dfs(n, str + "(", l + 1, r);
+//         if (r < l)
+//             dfs(n, str + ")", l, r + 1);
+//     }
+// }
+
+// @lc code=start
+// @date Apr 9 2020
 class Solution {
     List<String> res = new ArrayList<>();
     public List<String> generateParenthesis(int n) {
