@@ -14,8 +14,8 @@ class Solution {
             temp[k++] = arr[i] <= arr[j] ? arr[i++] : arr[j++];
         }
         while (i <= mid) {
-            temp[k++] = arr[i++];
             invCount += j - (mid + 1);
+            temp[k++] = arr[i++];
         }
         while (j <= end)
             temp[k++] = arr[j++];
