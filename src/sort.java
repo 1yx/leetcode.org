@@ -116,7 +116,7 @@ class Sort {
 
         int[] temp = new int[end - start + 1];
         int i = start, j = mid + 1, k = 0;
-        while(i <= mid && j <= high)
+        while(i <= mid && j <= end)
             temp[k++] = arr[i] < arr[j] ? arr[i++] : arr[j++];
         while(i <= mid)
             temp[k++] = arr[i++];
